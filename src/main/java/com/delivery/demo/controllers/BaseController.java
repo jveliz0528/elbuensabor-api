@@ -16,7 +16,7 @@ public class BaseController <E extends Base, S extends BaseServiceImpl<E, Long>>
     protected S service;
 
     @GetMapping("")
-    public ResponseEntity<Map<String, Object>> getAll(
+    public ResponseEntity<Map<String, Object>> getAllPaged(
             @RequestParam(required = false) String filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size,
@@ -28,6 +28,23 @@ public class BaseController <E extends Base, S extends BaseServiceImpl<E, Long>>
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/all")
+    @Transactional
+    public ResponseEntity<?>  getAll(@RequestParam(required = false) String filtro) {
+
+        try {
+
+            return ResponseEntity.status(HttpStatus.OK).body(service.findAll(filtro));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
+        }
+
     }
 
     @GetMapping("/{id}")

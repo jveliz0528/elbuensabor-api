@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(path = "api/v1/categoria")
+@RequestMapping(path = "api/v1/articulo/categoria")
 @Transactional
 public class CategoriaController extends BaseController<Categoria, CategoriaServiceImpl> {
 }

@@ -18,7 +18,7 @@ import java.util.Date;
 @Audited
 @Table(name = "usuario")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "rol", discriminatorType= DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "tipo", discriminatorType= DiscriminatorType.STRING)
 public class Usuario extends Base {
     private Date fechaAlta;
     private String nombre;

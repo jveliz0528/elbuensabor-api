@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(path = "api/v1/factura")
+@RequestMapping(path = "api/v1/comprobante/factura")
 @Transactional
 public class FacturaController extends BaseController<Factura, FacturaServiceImpl> {
 }
