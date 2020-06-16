@@ -19,7 +19,7 @@ import java.util.Date;
 @DiscriminatorValue(value = "empleado")
 public class Empleado extends Usuario {
     @Column(unique = true)
-    private int cuil;
+    private String cuil;
     private Date fechaDeIngreso;
     @OneToOne(cascade= CascadeType.ALL)
     @JoinColumn(name = "fk_direccion")

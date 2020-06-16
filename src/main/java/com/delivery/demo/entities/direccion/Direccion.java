@@ -25,5 +25,5 @@ public class Direccion extends Base {
     @JoinColumn(name = "fk_localidad")
     private Localidad localidad;
     private int numero;
-    private int piso;
+    private String piso;
 }
