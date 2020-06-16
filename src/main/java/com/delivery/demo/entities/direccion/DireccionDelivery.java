@@ -20,7 +20,7 @@ import javax.persistence.EntityListeners;
 public class DireccionDelivery extends Direccion {
     private String aclaraciones;
     private String alias;
-    private String latitud;
-    private String longitud;
+    private double latitud;
+    private double longitud;
 
 }

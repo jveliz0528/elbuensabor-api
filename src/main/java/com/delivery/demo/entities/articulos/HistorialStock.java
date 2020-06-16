@@ -19,11 +19,7 @@ import java.util.Date;
 @Table(name = "historial_stock")
 public class HistorialStock extends Base {
     private double cantidad;
-    private double costoPorUnidad;
     private Date fechaMovimiento;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "fk_articulo")
-    private Articulo articulo;
     @Column(columnDefinition = "boolean default false")
     private boolean operacion;
 }

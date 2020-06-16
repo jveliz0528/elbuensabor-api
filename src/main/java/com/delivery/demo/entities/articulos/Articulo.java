@@ -19,10 +19,10 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo", discriminatorType= DiscriminatorType.STRING)
 public class Articulo extends Base {
+
     private String denominacion;
     private String descripcion;
     private String imagen;
-    @Column(columnDefinition = "boolean default false")
-    private boolean oculto;
+    private double precio;
 
 }

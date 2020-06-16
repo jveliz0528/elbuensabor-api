@@ -17,8 +17,7 @@ import java.util.List;
 @Audited
 @DiscriminatorValue(value = "manufacturado")
 public class Manufacturado extends Articulo {
-    private double precioVenta;
-    private int tiempoEtimadoCocina;
+    private int tiempoEstimadoCocina;
     @ManyToOne(optional = false)
     @JoinColumn(name = "fk_categoria")
     private Categoria categoria;

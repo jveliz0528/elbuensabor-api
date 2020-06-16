@@ -120,7 +120,7 @@ public abstract class BaseServiceImpl<E extends Base, ID extends Serializable>
 
                 Optional<E> entityOptional = baseRepository.findById(entityId);
                 E toDelete = entityOptional.get();
-                toDelete.setDeleted(true);
+                toDelete.setEliminado(true);
                 toDelete = baseRepository.save(toDelete);
                 return true;
             } else {

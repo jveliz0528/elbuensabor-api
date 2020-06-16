@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(path = "api/v1/direccion/provincia")
+@RequestMapping(path = "api/v1/direcciones/provincias")
 @Transactional
 public class ProvinciaController extends BaseController<Provincia, ProvinciaServiceImpl> {
 }

@@ -17,8 +17,6 @@ import javax.persistence.*;
 @Audited
 @Table(name = "categoria")
 public class Categoria extends Base {
+    private String imagen;
     private String denominacion;
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "fk_categoria_padre")
-    private Categoria categoriaPadre;
 }

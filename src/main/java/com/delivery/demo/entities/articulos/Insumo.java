@@ -17,16 +17,13 @@ import java.util.List;
 @Audited
 @DiscriminatorValue(value = "insumo")
 public class Insumo extends Articulo {
-    private double costoPorUnidad;
-    private String denominacion;
-    private String imagen;
+    private double costo;
+    @Column(columnDefinition = "boolean default true")
+    private boolean esInsumo;
     private double stockActual;
     private double stockMaximo;
     private double stockMinimo;
     private String unidadMedida;
-//    @ManyToOne(optional = false)
-//    @JoinColumn(name = "fk_unidad_medida")
-//    private UnidadMedida unidadMedida;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HistorialStock> historialStock;
     @ManyToOne(optional = false)

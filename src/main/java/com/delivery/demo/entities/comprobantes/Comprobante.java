@@ -24,9 +24,6 @@ public class Comprobante extends Base {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecha;
     private String formaPago;
-//    @ManyToOne(optional = false)
-//    @JoinColumn(name = "fk_forma_pago")
-//    private FormaPago formaPago;
     private double montoDescuento;
     private double total;
     @ManyToOne(optional = false)

@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(path = "api/v1/articulo/rubro")
+@RequestMapping(path = "api/v1/articulos/rubros")
 @Transactional
 public class RubroController extends BaseController<Rubro, RubroServiceImpl> {
 }

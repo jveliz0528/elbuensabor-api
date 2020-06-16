@@ -17,7 +17,7 @@ import javax.persistence.*;
 @Audited
 @Table(name = "detalle_receta")
 public class DetalleReceta extends Base {
-    private int cantidad;
+    private double cantidad;
     @ManyToOne(optional = false)
     @JoinColumn(name = "fk_insumo")
     private Insumo insumo;

@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(path = "api/v1/direccion/legal")
+@RequestMapping(path = "api/v1/direcciones/legal")
 @Transactional
 public class DireccionLegalController extends BaseController<DireccionLegal, DireccionLegalServiceImpl> {
 }

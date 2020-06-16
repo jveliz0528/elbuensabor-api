@@ -15,6 +15,12 @@ public class Base {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ultimaActualizacion;
+
     @Column(columnDefinition = "boolean default false")
-    private boolean deleted;
+    private boolean oculto;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean eliminado;
 }

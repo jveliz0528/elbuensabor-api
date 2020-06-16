@@ -11,4 +11,9 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
     public UsuarioServiceImpl(BaseRepository<Usuario, Long> baseRepository) {
         super(baseRepository);
     }
+
+    @Override
+    public Usuario findByUID(String UID) throws Exception {
+        return null;
+    }
 }

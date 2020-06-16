@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(path = "api/v1/articulo/manufacturado")
+@RequestMapping(path = "api/v1/articulos/manufacturados")
 @Transactional
 public class ManufacturadoController extends BaseController<Manufacturado, ManufacturadoServiceImpl> {
 }
