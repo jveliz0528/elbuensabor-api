@@ -18,7 +18,7 @@ import javax.persistence.*;
 @Table(name = "categoria")
 public class Categoria extends Base {
     private String denominacion;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "fk_categoria_padre")
     private Categoria categoriaPadre;
 }

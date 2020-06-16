@@ -18,7 +18,7 @@ import javax.persistence.*;
 @Table(name = "rubro")
 public class Rubro extends Base {
     private String denominacion;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "fk_rubro_padre")
     private Rubro rubroPadre;
 }

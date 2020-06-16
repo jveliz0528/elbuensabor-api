@@ -25,10 +25,10 @@ public class Factura extends Comprobante {
     @OneToOne
     @JoinColumn(name = "fk_orden")
     private Orden orden;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "fk_datos_empresa")
     private DatosEmpresa datosEmpresa;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "fk_cajero")
     private Empleado cajero;
 }

@@ -26,13 +26,13 @@ public class Orden extends Comprobante {
     private boolean delivery;
     @Temporal(TemporalType.TIMESTAMP)
     private Date horarioEntrega;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "fk_cliente")
     private Cliente cliente;
     @ManyToOne(optional = true)
     @JoinColumn(name = "fk_direccion_entrega")
     private DireccionDelivery direccionEntrega;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "fk_repartidor")
     private Empleado repartidor;
 
