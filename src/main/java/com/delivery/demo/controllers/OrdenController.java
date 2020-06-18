@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(path = "api/v1/comprobantes/orden")
+@RequestMapping(path = "api/v1/comprobantes/ordenes")
 @Transactional
 public class OrdenController extends BaseController<Orden, OrdenServiceImpl> {
     @PostMapping("/save")
@@ -31,7 +31,7 @@ public class OrdenController extends BaseController<Orden, OrdenServiceImpl> {
 
     }
 
-    @PutMapping("/estado/{ordenId}")
+    @PutMapping("formulario PPS{ordenId}")
     public ResponseEntity<?> actualizarEstado(@RequestBody Estado estado, @PathVariable Long ordenId) {
         try {
 
