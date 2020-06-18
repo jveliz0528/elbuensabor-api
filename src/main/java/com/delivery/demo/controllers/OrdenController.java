@@ -31,7 +31,7 @@ public class OrdenController extends BaseController<Orden, OrdenServiceImpl> {
 
     }
 
-    @PutMapping("formulario PPS{ordenId}")
+    @PutMapping("/estado/{ordenId}")
     public ResponseEntity<?> actualizarEstado(@RequestBody Estado estado, @PathVariable Long ordenId) {
         try {
 

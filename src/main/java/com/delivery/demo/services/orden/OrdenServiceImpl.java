@@ -150,13 +150,13 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
             /* HORARIO ENTREGA */
             orden.setHorarioEntrega(this.calcularHorarioEntrega(orden.getFecha(), orden.getTiempoTotalPreparacion(), orden.isDelivery()));
 
-//            if(this.controlStock(orden.getDetalles())){
-//                orden.setDetalles(this.removeStock(orden.getDetalles()));
-//            } else {
-//                throw new Exception("Uno o más productos están fuera de stock");
-//            }
+            if(this.controlStock(orden.getDetalles())){
+                return baseRepository.save(orden);
+            } else {
+                throw new Exception("Uno o más productos están fuera de stock");
+            }
 
-            return baseRepository.save(orden);
+
 
         } catch (Exception e) {
 
@@ -231,6 +231,7 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(orden.getHorarioEntrega());
                 calendar.add(Calendar.MINUTE, 10);
+                orden.setHorarioEntrega(calendar.getTime());
             } else if (estado.getDenominacion().equals("terminado")){
                 if(this.controlStock(orden.getDetalles())){
                     orden.setDetalles(this.removeStock(orden.getDetalles()));
@@ -262,8 +263,11 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
                 }
             }
 
-            if(detalleOrdenAux.getInsumo() != null && detalleOrdenAux.getInsumo().getStockActual() < detalleOrdenAux.getCantidad()){
-                return false;
+            if(detalleOrdenAux.getInsumo() != null){
+                if (detalleOrdenAux.getInsumo().getStockActual() < detalleOrdenAux.getCantidad()){
+                    return false;
+                }
+
             }
         }
 
