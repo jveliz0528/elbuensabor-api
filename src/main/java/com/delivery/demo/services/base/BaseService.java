@@ -20,4 +20,10 @@ public interface BaseService<E extends Base, ID extends Serializable> {
 
     public boolean delete(ID entityId) throws Exception;
 
+    public boolean undoDelete(ID entityId) throws Exception;
+
+    public boolean hide(ID entityId) throws Exception;
+
+    public boolean unhide(ID entityId) throws Exception;
+
 }

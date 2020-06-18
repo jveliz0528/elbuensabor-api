@@ -30,7 +30,25 @@ public class SearchSpecification <E> {
         return new Specification<E>() {
             public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
-                return builder.equal(root.get("deleted"), false);
+                return builder.equal(root.get("eliminado"), false);
+            }
+        };
+    }
+
+    public Specification<E> isNotHidden() {
+        return new Specification<E>() {
+            public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query,
+                                         CriteriaBuilder builder) {
+                return builder.equal(root.get("oculto"), false);
+            }
+        };
+    }
+
+    public Specification<E> isBebida(){
+        return new Specification<E>() {
+            public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query,
+                                         CriteriaBuilder builder) {
+                return builder.equal(root.get("esBebida"), true);
             }
         };
     }

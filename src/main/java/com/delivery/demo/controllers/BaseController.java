@@ -32,11 +32,11 @@ public class BaseController <E extends Base, S extends BaseServiceImpl<E, Long>>
 
     @GetMapping("/all")
     @Transactional
-    public ResponseEntity<?>  getAll(@RequestParam(required = false) String filtro) {
+    public ResponseEntity<?>  getAll(@RequestParam(required = false) String filter) {
 
         try {
 
-            return ResponseEntity.status(HttpStatus.OK).body(service.findAll(filtro));
+            return ResponseEntity.status(HttpStatus.OK).body(service.findAll(filter));
 
         } catch (Exception e) {
 
@@ -98,13 +98,64 @@ public class BaseController <E extends Base, S extends BaseServiceImpl<E, Long>>
 
     }
 
-    @PutMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<?> delete(@PathVariable long id) {
 
         try {
 
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(service.delete(id));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
+        }
+
+    }
+
+    @PutMapping("/undoDelete/{id}")
+    @Transactional
+    public ResponseEntity<?> undoDelete(@PathVariable long id) {
+
+        try {
+
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(service.undoDelete(id));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
+        }
+
+    }
+
+    @PutMapping("/hide/{id}")
+    @Transactional
+    public ResponseEntity<?> hide(@PathVariable long id) {
+
+        try {
+
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(service.hide(id));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
+        }
+
+    }
+
+    @PutMapping("/unhide/{id}")
+    @Transactional
+    public ResponseEntity<?> undoHide(@PathVariable long id) {
+
+        try {
+
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(service.unhide(id));
 
         } catch (Exception e) {
 

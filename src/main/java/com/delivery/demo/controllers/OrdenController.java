@@ -1,10 +1,11 @@
 package com.delivery.demo.controllers;
 
+import com.delivery.demo.entities.comprobantes.Estado;
 import com.delivery.demo.entities.comprobantes.Orden;
 import com.delivery.demo.services.orden.OrdenServiceImpl;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 
@@ -13,4 +14,34 @@ import javax.transaction.Transactional;
 @RequestMapping(path = "api/v1/comprobantes/orden")
 @Transactional
 public class OrdenController extends BaseController<Orden, OrdenServiceImpl> {
+    @PostMapping("/{clienteUid}")
+    public ResponseEntity<?> post(@RequestBody Orden entityForm, @PathVariable String clienteUid) {
+
+        try {
+
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entityForm, clienteUid));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
+        }
+
+    }
+
+    @PutMapping("/estado/{ordenId}")
+    public ResponseEntity<?> actualizarEstado(@RequestBody Estado estado, @PathVariable Long ordenId) {
+        try {
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.actualizarEstado(estado, ordenId));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
+        }
+    }
 }

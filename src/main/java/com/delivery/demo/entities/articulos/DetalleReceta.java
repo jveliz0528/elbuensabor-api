@@ -20,5 +20,5 @@ public class DetalleReceta extends Base {
     private double cantidad;
     @ManyToOne(optional = false)
     @JoinColumn(name = "fk_insumo")
-    private Insumo insumo;
+    private ArticuloInsumo insumo;
 }

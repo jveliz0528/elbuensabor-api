@@ -17,7 +17,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 @DiscriminatorValue(value = "cliente")
-public class Cliente extends Empleado {
+public class Cliente extends Usuario {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DireccionDelivery> direccionesEnvio;
 }

@@ -24,6 +24,7 @@ import java.util.List;
 public class Orden extends Comprobante {
     @Column(columnDefinition = "boolean default false")
     private boolean delivery;
+    private int tiempoTotalPreparacion;
     @Temporal(TemporalType.TIMESTAMP)
     private Date horarioEntrega;
     @ManyToOne(optional = true)
@@ -35,5 +36,7 @@ public class Orden extends Comprobante {
     @ManyToOne(optional = true)
     @JoinColumn(name = "fk_repartidor")
     private Empleado repartidor;
+    @OneToOne(mappedBy = "orden")
+    private Factura factura;
 
 }

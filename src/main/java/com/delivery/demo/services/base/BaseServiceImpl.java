@@ -11,12 +11,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.*;
 
 public abstract class BaseServiceImpl<E extends Base, ID extends Serializable>
         implements BaseService<E, ID> {
 
     protected BaseRepository<E, ID> baseRepository;
+    SearchSpecification<E> spec = new SearchSpecification<E>();
 
     @Autowired
     public BaseServiceImpl(BaseRepository<E,ID> baseRepository){
@@ -33,10 +35,9 @@ public abstract class BaseServiceImpl<E extends Base, ID extends Serializable>
                 pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sortBy));
             }
 
-            SearchSpecification<E> spec = new SearchSpecification<E>();
-            Specification<E> spec1 = spec.isNotDeleted();
+            Specification<E> isNotDeleted = spec.isNotDeleted();
 
-            Page<E> entityPage = baseRepository.findAll(Specification.where(spec1),pageable);
+            Page<E> entityPage = baseRepository.findAll(Specification.where(isNotDeleted),pageable);
             List<E> entities = entityPage.getContent();
 
             Map<String, Object> response = new HashMap<>();
@@ -53,7 +54,6 @@ public abstract class BaseServiceImpl<E extends Base, ID extends Serializable>
     public List<E> findAll(String filter) throws Exception {
         try{
 
-            SearchSpecification<E> spec = new SearchSpecification<E>();
             Specification<E> isNotDeleted = spec.isNotDeleted();
             return baseRepository.findAll(Specification.where(isNotDeleted));
 
@@ -83,6 +83,9 @@ public abstract class BaseServiceImpl<E extends Base, ID extends Serializable>
     public E save(E entity) throws Exception {
         try {
 
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            entity.setUltimaActualizacion(timestamp);
+
             entity = baseRepository.save(entity);
 
             return entity;
@@ -100,6 +103,9 @@ public abstract class BaseServiceImpl<E extends Base, ID extends Serializable>
             Optional<E> entityOptional = baseRepository.findById(entityId);
 
             E entityUpdated = entityOptional.get();
+
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            entity.setUltimaActualizacion(timestamp);
 
             entityUpdated = baseRepository.save(entity);
 
@@ -121,7 +127,82 @@ public abstract class BaseServiceImpl<E extends Base, ID extends Serializable>
                 Optional<E> entityOptional = baseRepository.findById(entityId);
                 E toDelete = entityOptional.get();
                 toDelete.setEliminado(true);
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                toDelete.setUltimaActualizacion(timestamp);
                 toDelete = baseRepository.save(toDelete);
+                return true;
+            } else {
+                throw new Exception();
+            }
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
+        }
+    }
+
+    @Override
+    public boolean undoDelete(ID entityId) throws Exception {
+        try {
+
+            if (baseRepository.existsById(entityId)) {
+
+                Optional<E> entityOptional = baseRepository.findById(entityId);
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                E toDelete = entityOptional.get();
+                toDelete.setEliminado(false);
+                toDelete.setUltimaActualizacion(timestamp);
+                toDelete = baseRepository.save(toDelete);
+                return true;
+            } else {
+                throw new Exception();
+            }
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
+        }
+    }
+
+    @Override
+    public boolean hide(ID entityId) throws Exception {
+        try {
+
+            if (baseRepository.existsById(entityId)) {
+
+                Optional<E> entityOptional = baseRepository.findById(entityId);
+                E toHide = entityOptional.get();
+                toHide.setOculto(true);
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                toHide.setUltimaActualizacion(timestamp);
+                toHide = baseRepository.save(toHide);
+                return true;
+
+            } else {
+                throw new Exception();
+            }
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
+        }
+    }
+
+    @Override
+    public boolean unhide(ID entityId) throws Exception {
+        try {
+
+            if (baseRepository.existsById(entityId)) {
+
+                Optional<E> entityOptional = baseRepository.findById(entityId);
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                E toHide = entityOptional.get();
+                toHide.setOculto(false);
+                toHide.setUltimaActualizacion(timestamp);
+                toHide = baseRepository.save(toHide);
                 return true;
             } else {
                 throw new Exception();

@@ -1,5 +1,6 @@
 package com.delivery.demo.entities.articulos;
 
+import com.delivery.demo.entities.Base;
 import lombok.*;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,10 +16,13 @@ import java.util.List;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-@DiscriminatorValue(value = "manufacturado")
-public class Manufacturado extends Articulo {
+@Table(name = "manufacturado")
+public class ArticuloManufacturado extends Base {
+    private String denominacion;
+    private String descripcion;
+    private String imagen;
     private int tiempoEstimadoCocina;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "fk_categoria")
     private Categoria categoria;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
