@@ -12,9 +12,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class RubroServiceImpl extends BaseServiceImpl<Rubro, Long> implements RubroService {
@@ -82,6 +84,157 @@ public class RubroServiceImpl extends BaseServiceImpl<Rubro, Long> implements Ru
 
         } catch (Exception e){
             throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean delete(Long entityId) throws Exception {
+        try {
+
+            if (baseRepository.existsById(entityId)) {
+                Optional<Rubro> entityOptional = baseRepository.findById(entityId);
+                Rubro toDelete = entityOptional.get();
+
+                toDelete.setEliminado(true);
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                toDelete.setUltimaActualizacion(timestamp);
+                toDelete = baseRepository.save(toDelete);
+
+                /* Eliminar rubros hijos */
+                Specification<Rubro> filterByRubroPadre = spec.findByForeignAttribute("rubroPadre", "denominacion", toDelete.getDenominacion());
+                List<Rubro> rubrosHijos = baseRepository.findAll(Specification.where(filterByRubroPadre));
+
+                if(rubrosHijos.size() > 0){
+                    for (Rubro rubro: rubrosHijos){
+                        rubro.setEliminado(true);
+                        rubro.setUltimaActualizacion(timestamp);
+                        rubro = baseRepository.save(rubro);
+                    }
+                }
+
+                return true;
+
+            } else {
+                throw new Exception();
+            }
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
+        }
+    }
+
+    @Override
+    public boolean undoDelete(Long entityId) throws Exception {
+        try {
+
+            if (baseRepository.existsById(entityId)) {
+
+                Optional<Rubro> entityOptional = baseRepository.findById(entityId);
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                Rubro toDelete = entityOptional.get();
+                toDelete.setEliminado(false);
+                toDelete.setUltimaActualizacion(timestamp);
+                toDelete = baseRepository.save(toDelete);
+
+                /* Ocultar rubros hijos */
+                Specification<Rubro> filterByRubroPadre = spec.findByForeignAttribute("rubroPadre", "denominacion", toDelete.getDenominacion());
+                List<Rubro> rubrosHijos = baseRepository.findAll(Specification.where(filterByRubroPadre));
+
+                if(rubrosHijos.size() > 0){
+                    for (Rubro rubro: rubrosHijos){
+                        rubro.setEliminado(false);
+                        rubro.setUltimaActualizacion(timestamp);
+                        rubro = baseRepository.save(rubro);
+                    }
+                }
+
+                return true;
+            } else {
+                throw new Exception();
+            }
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
+        }
+    }
+
+    @Override
+    public boolean hide(Long entityId) throws Exception {
+        try {
+
+            if (baseRepository.existsById(entityId)) {
+
+                Optional<Rubro> entityOptional = baseRepository.findById(entityId);
+                Rubro toHide = entityOptional.get();
+                toHide.setOculto(true);
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                toHide.setUltimaActualizacion(timestamp);
+                toHide = baseRepository.save(toHide);
+
+                /* Desocultar rubros hijos */
+                Specification<Rubro> filterByRubroPadre = spec.findByForeignAttribute("rubroPadre", "denominacion", toHide.getDenominacion());
+                List<Rubro> rubrosHijos = baseRepository.findAll(Specification.where(filterByRubroPadre));
+
+                if(rubrosHijos.size() > 0){
+                    for (Rubro rubro: rubrosHijos){
+                        rubro.setOculto(true);
+                        rubro.setUltimaActualizacion(timestamp);
+                        rubro = baseRepository.save(rubro);
+                    }
+                }
+
+
+                return true;
+
+            } else {
+                throw new Exception();
+            }
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
+        }
+    }
+
+    @Override
+    public boolean unhide(Long entityId) throws Exception {
+        try {
+
+            if (baseRepository.existsById(entityId)) {
+
+                Optional<Rubro> entityOptional = baseRepository.findById(entityId);
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                Rubro toHide = entityOptional.get();
+                toHide.setOculto(false);
+                toHide.setUltimaActualizacion(timestamp);
+                toHide = baseRepository.save(toHide);
+
+                /* Activar rubros hijos */
+                Specification<Rubro> filterByRubroPadre = spec.findByForeignAttribute("rubroPadre", "denominacion", toHide.getDenominacion());
+                List<Rubro> rubrosHijos = baseRepository.findAll(Specification.where(filterByRubroPadre));
+
+                if(rubrosHijos.size() > 0){
+                    for (Rubro rubro: rubrosHijos){
+                        rubro.setOculto(false);
+                        rubro.setUltimaActualizacion(timestamp);
+                        rubro = baseRepository.save(rubro);
+                    }
+                }
+
+                return true;
+            } else {
+                throw new Exception();
+            }
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
         }
     }
 }

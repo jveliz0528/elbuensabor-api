@@ -21,6 +21,7 @@ public class ArticuloManufacturado extends Base {
     private String denominacion;
     private String descripcion;
     private String imagen;
+    private double precio;
     private int tiempoEstimadoCocina;
     @ManyToOne(optional = true)
     @JoinColumn(name = "fk_categoria")

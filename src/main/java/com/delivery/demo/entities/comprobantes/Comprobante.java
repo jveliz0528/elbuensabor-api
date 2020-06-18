@@ -26,7 +26,7 @@ public class Comprobante extends Base {
     private String formaPago;
     private double montoDescuento;
     private double total;
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "fk_estado")
     private Estado estado;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

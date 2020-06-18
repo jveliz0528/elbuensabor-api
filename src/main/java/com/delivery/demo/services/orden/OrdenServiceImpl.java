@@ -133,6 +133,11 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
             Optional<Cliente> cliente = clienteRepository.findOne(Specification.where(filterByUid));
             orden.setCliente(cliente.get());
 
+            /* FECHA */
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            orden.setFecha(timestamp);
+            orden.setUltimaActualizacion(timestamp);
+
             /* ESTADO */
             SearchSpecification<Estado> specEstado = new SearchSpecification<Estado>();
             Specification<Estado> filterByDenominacion = specEstado.findByProperty("denominacion", "pendiente");
@@ -150,9 +155,6 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
             } else {
                 throw new Exception("Uno o más productos están fuera de stock");
             }
-
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            orden.setUltimaActualizacion(timestamp);
 
             return baseRepository.save(orden);
 
@@ -172,19 +174,22 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(fechaEntrada);
 
-            int tiempoTotalOrdenes = 0;
+            if(ordenesEnCocina.size() > 0) {
+                int tiempoTotalOrdenes = 0;
 
-            for (Orden ordenAux: ordenesEnCocina){
-                tiempoTotalOrdenes += ordenAux.getTiempoTotalPreparacion();
+                for (Orden ordenAux: ordenesEnCocina){
+                    tiempoTotalOrdenes += ordenAux.getTiempoTotalPreparacion();
+                }
+
+                SearchSpecification<Usuario> userSpec = new SearchSpecification<Usuario>();
+                Specification<Usuario> filterByCocinero = userSpec.findByForeignAttribute("rol", "denominacion", "cocinero");
+                long cantidadCocinero = usuarioRepository.count(Specification.where(filterByCocinero));
+
+                int tiempoEspera = (int) (tiempoTotalOrdenes / cantidadCocinero);
+
+                calendar.add(Calendar.MINUTE, tiempoEspera);
             }
 
-            SearchSpecification<Usuario> userSpec = new SearchSpecification<Usuario>();
-            Specification<Usuario> filterByCocinero = userSpec.findByForeignAttribute("rol", "denominacion", "cocinero");
-            long cantidadCocinero = usuarioRepository.count(Specification.where(filterByCocinero));
-
-            int tiempoEspera = (int) (tiempoTotalOrdenes / cantidadCocinero);
-
-            calendar.add(Calendar.MINUTE, tiempoEspera);
             calendar.add(Calendar.MINUTE, tiempoOrdenActual);
 
             if(delivery){
@@ -199,14 +204,18 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
 
     @Override
     public int calcularTiempoTotalPreparacion(List<DetalleOrden> detallesOrden) throws Exception {
-        int tiempoTotal = 0;
+        if (detallesOrden.size() > 0){
+            int tiempoTotal = 0;
 
-        for (DetalleOrden detalle: detallesOrden){
-            if(detalle.getArticuloManufacturado() != null){
-                tiempoTotal += detalle.getArticuloManufacturado().getTiempoEstimadoCocina();
+            for (DetalleOrden detalle: detallesOrden){
+                if(detalle.getArticuloManufacturado() != null){
+                    tiempoTotal += detalle.getArticuloManufacturado().getTiempoEstimadoCocina();
+                }
             }
+            return tiempoTotal;
+        } else {
+            return 0;
         }
-        return tiempoTotal;
     }
 
 
@@ -276,14 +285,14 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
                         insumoOptional = insumoRepository.findById(detalleReceta.getInsumo().getId());
                         articuloInsumo = insumoOptional.get();
                         articuloInsumo.setStockActual(articuloInsumo.getStockActual() - (detalleReceta.getCantidad() * detalleOrdenAux.getCantidad()));
-                        articuloInsumo.getHistorialStock().add(new HistorialStock(detalleReceta.getCantidad(), timestamp, false));
+                        articuloInsumo.getHistorialStock().add(new HistorialStock((detalleReceta.getCantidad() * detalleOrdenAux.getCantidad()), timestamp, false));
                         articuloInsumo.setUltimaActualizacion(timestamp);
                         articuloInsumo = insumoRepository.save(articuloInsumo);
                         detalleReceta.setInsumo(articuloInsumo);
                     }
                 }
 
-                if(detalleOrdenAux.getInsumo() != null && detalleOrdenAux.getInsumo().getStockActual() < detalleOrdenAux.getCantidad()){
+                if(detalleOrdenAux.getInsumo() != null){
                     insumoOptional = insumoRepository.findById(detalleOrdenAux.getInsumo().getId());
                     articuloInsumo = insumoOptional.get();
                     articuloInsumo.setStockActual(articuloInsumo.getStockActual() - detalleOrdenAux.getCantidad());

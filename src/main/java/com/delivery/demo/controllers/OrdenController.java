@@ -14,8 +14,8 @@ import javax.transaction.Transactional;
 @RequestMapping(path = "api/v1/comprobantes/orden")
 @Transactional
 public class OrdenController extends BaseController<Orden, OrdenServiceImpl> {
-    @PostMapping("/{clienteUid}")
-    public ResponseEntity<?> post(@RequestBody Orden entityForm, @PathVariable String clienteUid) {
+    @PostMapping("/save")
+    public ResponseEntity<?> post(@RequestBody Orden entityForm, @RequestParam String clienteUid) {
 
         try {
 

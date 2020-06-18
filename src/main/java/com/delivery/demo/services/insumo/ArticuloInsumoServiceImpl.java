@@ -83,6 +83,28 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
     }
 
     @Override
+    public ArticuloInsumo save(ArticuloInsumo entity) throws Exception {
+        try {
+
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            entity.setUltimaActualizacion(timestamp);
+
+            if(entity.getStockActual() > 0){
+                entity.getHistorialStock().add(new HistorialStock(entity.getStockActual(), timestamp, true));
+            }
+
+            entity = baseRepository.save(entity);
+
+            return entity;
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
+        }
+    }
+
+    @Override
     public ArticuloInsumo addStock(Long articuloId, double cantidad) throws Exception {
         try {
             Optional<ArticuloInsumo> articuloInsumoOptional = baseRepository.findById(articuloId);

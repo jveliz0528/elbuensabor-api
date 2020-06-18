@@ -14,7 +14,7 @@ import javax.transaction.Transactional;
 @Transactional
 public class UsuarioController extends BaseController<Usuario, UsuarioServiceImpl> {
 
-    @GetMapping("/{uid}")
+    @GetMapping("/current/{uid}")
     @Transactional
     public ResponseEntity<?> getOneByUID(@PathVariable String uid) {
 
