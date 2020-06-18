@@ -150,11 +150,11 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
             /* HORARIO ENTREGA */
             orden.setHorarioEntrega(this.calcularHorarioEntrega(orden.getFecha(), orden.getTiempoTotalPreparacion(), orden.isDelivery()));
 
-            if(this.controlStock(orden.getDetalles())){
-                orden.setDetalles(this.removeStock(orden.getDetalles()));
-            } else {
-                throw new Exception("Uno o más productos están fuera de stock");
-            }
+//            if(this.controlStock(orden.getDetalles())){
+//                orden.setDetalles(this.removeStock(orden.getDetalles()));
+//            } else {
+//                throw new Exception("Uno o más productos están fuera de stock");
+//            }
 
             return baseRepository.save(orden);
 
@@ -234,6 +234,8 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
             } else if (estado.getDenominacion().equals("terminado")){
                 if(this.controlStock(orden.getDetalles())){
                     orden.setDetalles(this.removeStock(orden.getDetalles()));
+                } else {
+                    throw new Exception("Uno o más artículos están fuera de stock");
                 }
             }
 

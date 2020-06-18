@@ -144,7 +144,7 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
 
             /* ESTADO */
             SearchSpecification<Estado> specEstado = new SearchSpecification<Estado>();
-            Specification<Estado> filterByDenominacion = specEstado.findByProperty("denominacion", "aprobado");
+            Specification<Estado> filterByDenominacion = specEstado.findByProperty("denominacion", "pagado");
             Optional<Estado> estado = estadoRepository.findOne(Specification.where(filterByDenominacion));
             factura.setEstado(estado.get());
 
@@ -186,7 +186,7 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
                 Factura facturaAnulada = entityOptional.get();
 
                 SearchSpecification<Estado> specEstado = new SearchSpecification<Estado>();
-                Specification<Estado> filterByDenominacion = specEstado.findByProperty("denominacion", "pagado");
+                Specification<Estado> filterByDenominacion = specEstado.findByProperty("denominacion", "anulado");
                 Optional<Estado> estado = estadoRepository.findOne(Specification.where(filterByDenominacion));
 
                 facturaAnulada.setEstado(estado.get());

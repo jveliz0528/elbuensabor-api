@@ -13,5 +13,4 @@ public class DireccionDeliveryServiceImpl extends BaseServiceImpl<DireccionDeliv
         super(baseRepository);
     }
 
-    SearchSpecification<DireccionDelivery> spec = new SearchSpecification<DireccionDelivery>();
 }
