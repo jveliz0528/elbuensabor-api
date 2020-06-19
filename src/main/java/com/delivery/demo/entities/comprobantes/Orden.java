@@ -9,6 +9,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,21 +23,32 @@ import java.util.List;
 @Audited
 @DiscriminatorValue(value = "orden")
 public class Orden extends Comprobante {
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetalleOrden> detalles;
+
     @Column(columnDefinition = "boolean default false")
     private boolean delivery;
+
     private int tiempoTotalPreparacion;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date horarioEntrega;
-    @ManyToOne(optional = true)
+
+    @ManyToOne
     @JoinColumn(name = "fk_cliente")
     private Cliente cliente;
-    @ManyToOne(optional = true)
+
+    @ManyToOne
     @JoinColumn(name = "fk_direccion_entrega")
     private DireccionDelivery direccionEntrega;
-    @ManyToOne(optional = true)
+
+    @ManyToOne
     @JoinColumn(name = "fk_repartidor")
     private Empleado repartidor;
-    @OneToOne(mappedBy = "orden")
+
+    @OneToOne
+    @JoinColumn(name = "fk_factura")
     private Factura factura;
 
 }

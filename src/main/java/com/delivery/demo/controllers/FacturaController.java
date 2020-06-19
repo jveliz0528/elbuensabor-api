@@ -17,12 +17,11 @@ public class FacturaController extends BaseController<Factura, FacturaServiceImp
 
     @PostMapping("/generar")
     @Transactional
-    public ResponseEntity<?> generarFactura(@RequestBody Orden orden, @RequestParam String cajeroUid) {
+    public ResponseEntity<?> generarFactura(@RequestParam Long ordenId, @RequestParam String cajeroUid) {
 
         try {
 
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(service.save(orden, cajeroUid));
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.save(ordenId, cajeroUid));
 
         } catch (Exception e) {
 
@@ -34,6 +33,7 @@ public class FacturaController extends BaseController<Factura, FacturaServiceImp
     }
 
     @PutMapping("/anular/{id}")
+    @Transactional
     public ResponseEntity<?> anularFactura(@PathVariable long id) {
 
         try {

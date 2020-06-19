@@ -19,12 +19,16 @@ import javax.persistence.*;
 @Audited
 @Table(name = "detalle_orden")
 public class DetalleOrden extends Base {
+
     private double cantidad;
+
     private double precioTotal;
-    @ManyToOne(optional = true)
+
+    @ManyToOne
     @JoinColumn(name = "fk_insumo")
     private ArticuloInsumo insumo;
-    @ManyToOne(optional = true)
+
+    @ManyToOne
     @JoinColumn(name= "fk_manufacturado")
     private ArticuloManufacturado articuloManufacturado;
 }

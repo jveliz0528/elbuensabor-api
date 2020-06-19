@@ -32,7 +32,7 @@ public class ArticuloInsumo extends Base {
     private String unidadMedida;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HistorialStock> historialStock;
-    @ManyToOne(optional = true)
+    @ManyToOne
     @JoinColumn(name = "fk_rubro")
     private Rubro rubro;
 

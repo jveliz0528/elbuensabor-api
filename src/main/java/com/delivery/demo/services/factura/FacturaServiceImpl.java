@@ -1,6 +1,7 @@
 package com.delivery.demo.services.factura;
 
 import com.delivery.demo.entities.DatosEmpresa;
+import com.delivery.demo.entities.comprobantes.DetalleOrden;
 import com.delivery.demo.entities.comprobantes.Estado;
 import com.delivery.demo.entities.comprobantes.Factura;
 import com.delivery.demo.entities.comprobantes.Orden;
@@ -127,13 +128,15 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
 
 
     @Override
-    public Factura save(Orden orden, String cajeroUID) throws Exception {
+    public Factura save(Long ordenId, String cajeroUid) throws Exception {
         try {
 
             Factura factura = new Factura();
 
+            Optional<Orden> ordenOptional = ordenRepository.findById(ordenId);
+            Orden orden = ordenOptional.get();
+
             factura.setOrden(orden);
-            factura.setDetalles(orden.getDetalles());
             factura.setMontoDescuento(orden.getMontoDescuento());
             factura.setTotal(orden.getTotal());
             factura.setFormaPago(orden.getFormaPago());
@@ -150,7 +153,7 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
 
             /* CAJERO */
             SearchSpecification<Empleado> specEmpleado = new SearchSpecification<Empleado>();
-            Specification<Empleado> filterByUID = specEmpleado.findByUid(cajeroUID);
+            Specification<Empleado> filterByUID = specEmpleado.findByUid(cajeroUid);
             Optional<Empleado> empleado = empleadoRepository.findOne(Specification.where(filterByUID));
             factura.setCajero(empleado.get());
 
@@ -159,11 +162,11 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
             factura.setDatosEmpresa(datosEmpresa.get());
 
             /* ACTUALIZAR ESTADO ORDEN */
-            filterByDenominacion = specEstado.findByProperty("denominacion", "terminado");
-            Optional<Estado> estadoOrden = estadoRepository.findOne(Specification.where(filterByDenominacion));
-            orden.setEstado(estadoOrden.get());
-            orden.setUltimaActualizacion(timestamp);
+//            filterByDenominacion = specEstado.findByProperty("denominacion", "terminado");
+//            Optional<Estado> estadoOrden = estadoRepository.findOne(Specification.where(filterByDenominacion));
+//            orden.setEstado(estadoOrden.get());
 
+            orden.setFactura(factura);
             orden = ordenRepository.save(orden);
 
             return baseRepository.save(factura);
