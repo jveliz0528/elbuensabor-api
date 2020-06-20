@@ -15,6 +15,21 @@ import javax.transaction.Transactional;
 @Transactional
 public class FacturaController extends BaseController<Factura, FacturaServiceImpl> {
 
+    @GetMapping("/orden/{ordenId}")
+    @Transactional
+    public ResponseEntity<?> getFactura(@PathVariable Long ordenId){
+        try {
+
+            return ResponseEntity.status(HttpStatus.OK).body(service.getOneByOrden(ordenId));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
+        }
+    }
+
     @PostMapping("/generar")
     @Transactional
     public ResponseEntity<?> generarFactura(@RequestParam Long ordenId, @RequestParam String cajeroUid) {

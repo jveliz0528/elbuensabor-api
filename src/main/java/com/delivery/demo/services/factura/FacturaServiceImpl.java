@@ -166,15 +166,25 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
 //            Optional<Estado> estadoOrden = estadoRepository.findOne(Specification.where(filterByDenominacion));
 //            orden.setEstado(estadoOrden.get());
 
-            orden.setFactura(factura);
-            orden = ordenRepository.save(orden);
+            factura = baseRepository.save(factura);
 
-            return baseRepository.save(factura);
+            return factura;
 
         } catch (Exception e) {
 
             throw new Exception(e.getMessage());
 
+        }
+    }
+
+    @Override
+    public Factura getOneByOrden(Long ordenId) throws Exception {
+        try{
+            Specification<Factura> filterByOrden = spec.findByForeignId("orden", ordenId);
+            Optional<Factura> factura = baseRepository.findOne(Specification.where(filterByOrden));
+            return factura.get();
+        } catch (Exception e){
+            throw new Exception(e.getMessage());
         }
     }
 

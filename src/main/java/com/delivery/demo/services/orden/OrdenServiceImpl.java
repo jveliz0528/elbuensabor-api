@@ -6,6 +6,7 @@ import com.delivery.demo.entities.comprobantes.DetalleOrden;
 import com.delivery.demo.entities.comprobantes.Estado;
 import com.delivery.demo.entities.comprobantes.Orden;
 import com.delivery.demo.entities.usuarios.Cliente;
+import com.delivery.demo.entities.usuarios.Empleado;
 import com.delivery.demo.entities.usuarios.Usuario;
 import com.delivery.demo.repositories.BaseRepository;
 import com.delivery.demo.repositories.articulos.ArticuloInsumoRepository;
@@ -46,6 +47,7 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
 
     SearchSpecification<Orden> spec = new SearchSpecification<Orden>();
     Specification<Orden> isNotDeleted = spec.isNotDeleted();
+    SearchSpecification<Estado> specEstado = new SearchSpecification<Estado>();
 
     @Override
     public Map<String, Object> findAll(String filter, int page, int size, String sortBy, String direction) throws Exception {
@@ -139,7 +141,6 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
             orden.setUltimaActualizacion(timestamp);
 
             /* ESTADO */
-            SearchSpecification<Estado> specEstado = new SearchSpecification<Estado>();
             Specification<Estado> filterByDenominacion = specEstado.findByProperty("denominacion", "pendiente");
             Optional<Estado> estado = estadoRepository.findOne(Specification.where(filterByDenominacion));
             orden.setEstado(estado.get());
@@ -151,7 +152,8 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
             orden.setHorarioEntrega(this.calcularHorarioEntrega(orden.getFecha(), orden.getTiempoTotalPreparacion(), orden.isDelivery()));
 
             if(this.controlStock(orden.getDetalles())){
-                return baseRepository.save(orden);
+                orden = baseRepository.save(orden);
+                return orden;
             } else {
                 throw new Exception("Uno o más productos están fuera de stock");
             }
@@ -168,8 +170,9 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
     @Override
     public Date calcularHorarioEntrega(Date fechaEntrada, int tiempoOrdenActual, boolean delivery) throws Exception {
         try{
-            Specification<Orden> filterByEstado = spec.findByForeignAttribute("estado", "denominacion", "en proceso");
-            List<Orden> ordenesEnCocina = baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByEstado)));
+            Specification<Orden> filterByEnProceso = spec.findByForeignAttribute("estado", "denominacion", "en proceso");
+            Specification<Orden> filterByDemorado = spec.findByForeignAttribute("estado", "denominacion", "demorado");
+            List<Orden> ordenesEnCocina = baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByEnProceso).or(filterByDemorado)));
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(fechaEntrada);
@@ -243,12 +246,38 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             orden.setUltimaActualizacion(timestamp);
 
-            return baseRepository.save(orden);
+            orden = baseRepository.save(orden);
+
+            return orden;
 
         } catch (Exception e) {
 
             throw new Exception(e.getMessage());
 
+        }
+    }
+
+    @Override
+    public Orden addRepartidor(Empleado repartidor, Long ordenId) throws Exception {
+        try{
+
+            Optional<Orden> ordenOptional = baseRepository.findById(ordenId);
+            Orden orden = ordenOptional.get();
+
+            orden.setRepartidor(repartidor);
+
+            Specification<Estado> filterByEnCamino = specEstado.findByProperty("denominacion", "en camino");
+            Optional<Estado> estado = estadoRepository.findOne(Specification.where(filterByEnCamino));
+
+            orden.setEstado(estado.get());
+
+            orden = baseRepository.save(orden);
+
+            return orden;
+
+
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
         }
     }
 

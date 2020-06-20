@@ -116,7 +116,8 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
             articulo.setUltimaActualizacion(timestamp);
             articulo.getHistorialStock().add(new HistorialStock(cantidad, timestamp, true));
 
-            return baseRepository.save(articulo);
+            articulo = baseRepository.save(articulo);
+            return articulo;
 
         } catch (Exception e){
             throw new Exception(e.getMessage());
@@ -136,7 +137,8 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
                 articulo.getHistorialStock().add(new HistorialStock(cantidad, timestamp, false));
                 articulo.setUltimaActualizacion(timestamp);
 
-                return baseRepository.save(articulo);
+                articulo = baseRepository.save(articulo);
+                return articulo;
 
             } else {
                 throw new Exception("Stock insuficiente");

@@ -44,11 +44,11 @@ public class SearchSpecification <E> {
         };
     }
 
-    public Specification<E> isBebida(){
+    public Specification<E> findByForeignId(String columnName, Long id){
         return new Specification<E>() {
             public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
-                return builder.equal(root.get("esBebida"), true);
+                return builder.equal(root.join(columnName).get("id"), id);
             }
         };
     }

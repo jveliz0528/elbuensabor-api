@@ -24,6 +24,8 @@ import java.util.List;
 @DiscriminatorValue(value = "orden")
 public class Orden extends Comprobante {
 
+    private String aclaraciones;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleOrden> detalles;
 
@@ -46,9 +48,5 @@ public class Orden extends Comprobante {
     @ManyToOne
     @JoinColumn(name = "fk_repartidor")
     private Empleado repartidor;
-
-    @OneToOne
-    @JoinColumn(name = "fk_factura")
-    private Factura factura;
 
 }

@@ -22,7 +22,7 @@ import java.util.List;
 @DiscriminatorValue(value = "factura")
 public class Factura extends Comprobante {
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_orden")
     private Orden orden;
 
