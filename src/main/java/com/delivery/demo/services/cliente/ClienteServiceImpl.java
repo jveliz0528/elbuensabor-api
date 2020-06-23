@@ -2,9 +2,13 @@ package com.delivery.demo.services.cliente;
 
 import com.delivery.demo.entities.direccion.DireccionDelivery;
 import com.delivery.demo.entities.usuarios.Cliente;
+import com.delivery.demo.entities.usuarios.Rol;
 import com.delivery.demo.repositories.BaseRepository;
+import com.delivery.demo.repositories.direccion.DireccionDeliveryRepository;
+import com.delivery.demo.repositories.usuarios.RolRepository;
 import com.delivery.demo.services.base.BaseServiceImpl;
 import com.delivery.demo.specifications.SearchSpecification;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,13 +17,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implements ClienteService {
+
+    @Autowired
+    private RolRepository rolRepository;
+
+    @Autowired
+    private DireccionDeliveryRepository direccionDeliveryRepository;
 
     public ClienteServiceImpl(BaseRepository<Cliente, Long> baseRepository) {
         super(baseRepository);
@@ -93,6 +100,30 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implement
     }
 
     @Override
+    public Cliente save(Cliente entity) throws Exception {
+        try {
+            SearchSpecification<Rol> spec = new SearchSpecification<Rol>();
+            Specification<Rol> filterByName = spec.findByProperty("denominacion", "cliente");
+            Optional<Rol> rolCliente = rolRepository.findOne(Specification.where(filterByName));
+
+            entity.setRol(rolCliente.get());
+
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            entity.setUltimaActualizacion(timestamp);
+            entity.setFechaAlta(timestamp);
+
+            entity = baseRepository.save(entity);
+
+            return entity;
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
+        }
+    }
+
+    @Override
     public Cliente addDireccion(DireccionDelivery direccion, String uid) throws Exception {
         try {
 
@@ -130,11 +161,43 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implement
                 if(direccionAux.getId() == direccionId){
                     direccionAux.setEliminado(true);
                     direccionAux.setUltimaActualizacion(timestamp);
+                    direccionAux = direccionDeliveryRepository.save(direccionAux);
                     return true;
                 }
             }
 
             return false;
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
+        }
+    }
+
+    @Override
+    public List<DireccionDelivery> getDirecciones(String uid) throws Exception {
+        try {
+
+            Specification<Cliente> filterByUID = spec.findByUid(uid);
+            Optional<Cliente> entityOptional = baseRepository.findOne(Specification.where(filterByUID));
+
+            Cliente entityUpdated = entityOptional.get();
+
+            List<DireccionDelivery> direcciones = new ArrayList<>();
+
+            if (entityUpdated.getDireccionesEnvio().size() > 0){
+                for (DireccionDelivery direccionAux: entityUpdated.getDireccionesEnvio()){
+                    if(!direccionAux.isEliminado()){
+                        direcciones.add(direccionAux);
+                    }
+                }
+
+                return direcciones;
+
+            } else {
+                throw new Exception("No existen direcciones");
+            }
 
         } catch (Exception e) {
 
