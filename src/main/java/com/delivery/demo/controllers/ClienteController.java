@@ -15,6 +15,23 @@ import javax.transaction.Transactional;
 @Transactional
 public class ClienteController extends BaseController<Cliente, ClienteServiceImpl> {
 
+    @GetMapping("/current/{uid}")
+    @Transactional
+    public ResponseEntity<?> getOneByUID(@PathVariable String uid) {
+
+        try {
+
+            return ResponseEntity.status(HttpStatus.OK).body(service.findByUID(uid));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
+        }
+
+    }
+
     @PutMapping("/direccion/add")
     public ResponseEntity<?> addDireccion(@RequestBody DireccionDelivery direccion, @RequestParam String clienteUid ) {
 
