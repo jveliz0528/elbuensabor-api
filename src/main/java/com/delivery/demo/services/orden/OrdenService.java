@@ -8,6 +8,7 @@ import com.delivery.demo.services.base.BaseService;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface OrdenService extends BaseService<Orden, Long> {
     public Orden save(Orden orden, String clienteId) throws Exception;
@@ -17,4 +18,5 @@ public interface OrdenService extends BaseService<Orden, Long> {
     public Orden actualizarEstado(Estado estado, Long ordenId) throws Exception;
     public boolean controlStock(List<DetalleOrden> detalles);
     public List<DetalleOrden> removeStock(List<DetalleOrden> detalles) throws Exception;
+    public Map<String, Object> ordenesEnCocina(String filter, int page, int size, String sortBy, String direction) throws Exception;
 }

@@ -136,7 +136,6 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
             Optional<Orden> ordenOptional = ordenRepository.findById(ordenId);
             Orden orden = ordenOptional.get();
 
-            factura.setOrden(orden);
             factura.setMontoDescuento(orden.getMontoDescuento());
             factura.setTotal(orden.getTotal());
             factura.setFormaPago(orden.getFormaPago());
@@ -162,9 +161,13 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
             factura.setDatosEmpresa(datosEmpresa.get());
 
             /* ACTUALIZAR ESTADO ORDEN */
-//            filterByDenominacion = specEstado.findByProperty("denominacion", "terminado");
-//            Optional<Estado> estadoOrden = estadoRepository.findOne(Specification.where(filterByDenominacion));
-//            orden.setEstado(estadoOrden.get());
+            filterByDenominacion = specEstado.findByProperty("denominacion", "pagado");
+            Optional<Estado> estadoOrden = estadoRepository.findOne(Specification.where(filterByDenominacion));
+            orden.setEstado(estadoOrden.get());
+
+            orden = ordenRepository.save(orden);
+
+            factura.setOrden(orden);
 
             factura = baseRepository.save(factura);
 

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -56,6 +57,21 @@ public class OrdenController extends BaseController<Orden, OrdenServiceImpl> {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body
                     ("{\"error\": \""+e.getMessage()+"\"}");
 
+        }
+    }
+
+    @GetMapping("/cocina")
+    public ResponseEntity<Map<String, Object>> getOrdenesEnCocina(
+            @RequestParam(required = false) String filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(service.ordenesEnCocina(filter, page, size, sortBy, direction));
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -344,4 +344,49 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
             throw new Exception(e.getMessage());
         }
     }
+
+    @Override
+    public Map<String, Object> ordenesEnCocina(String filter, int page, int size, String sortBy, String direction) throws Exception {
+        try {
+            Pageable pageable;
+            if (direction.equals("desc")) {
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy));
+            } else {
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sortBy));
+            }
+
+            Page<Orden> entityPage;
+            Specification<Orden> filterByDemorado = spec.findByForeignAttribute("estado", "denominacion", "demorado");
+            Specification<Orden> filterByEnProceso = spec.findByForeignAttribute("estado", "denominacion", "en proceso");
+
+
+            if(filter == null || filter.equals("")){
+                entityPage = baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByEnProceso).or(filterByDemorado)),pageable);
+            } else {
+                Specification<Orden> filterByEstado = spec.findByForeignAttribute("estado", "denominacion", filter);
+                Specification<Orden> filterById = spec.findByProperty("descripcion", filter);
+                Specification<Orden> filterByFormaPago = spec.findByProperty("formaPago", filter);
+                Specification<Orden> filterByNombreCliente = spec.findByForeignAttribute("cliente", "nombre", filter);
+                Specification<Orden> filterByApellidoCliente = spec.findByForeignAttribute("cliente", "apellido", filter);
+
+                entityPage = baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByEnProceso).or(filterByDemorado))
+                        .and(Specification.where(filterByEstado)
+                                .or(filterById)
+                                .or(filterByFormaPago)
+                                .or(filterByNombreCliente)
+                                .or(filterByApellidoCliente)
+                        ), pageable);
+            }
+
+            List<Orden> entities = entityPage.getContent();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("payload", entities);
+            response.put("length", entityPage.getTotalElements());
+
+            return response;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
 }
