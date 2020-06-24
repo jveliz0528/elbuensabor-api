@@ -26,6 +26,7 @@ public class RubroServiceImpl extends BaseServiceImpl<Rubro, Long> implements Ru
     }
 
     SearchSpecification<Rubro> spec = new SearchSpecification<Rubro>();
+    Specification<Rubro> isNotDeleted = spec.isNotDeleted();
 
     @Override
     public Map<String, Object> findAll(String filter, int page, int size, String sortBy, String direction) throws Exception {
@@ -36,8 +37,6 @@ public class RubroServiceImpl extends BaseServiceImpl<Rubro, Long> implements Ru
             } else {
                 pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sortBy));
             }
-
-            Specification<Rubro> isNotDeleted = spec.isNotDeleted();
 
             Page<Rubro> entityPage;
 
@@ -68,8 +67,6 @@ public class RubroServiceImpl extends BaseServiceImpl<Rubro, Long> implements Ru
     @Override
     public List<Rubro> findAll(String filter) throws Exception {
         try{
-
-            Specification<Rubro> isNotDeleted = spec.isNotDeleted();
 
             if(filter == null || filter.equals("")){
                 return baseRepository.findAll(Specification.where(isNotDeleted));
@@ -235,6 +232,22 @@ public class RubroServiceImpl extends BaseServiceImpl<Rubro, Long> implements Ru
 
             throw new Exception(e.getMessage());
 
+        }
+    }
+
+    @Override
+    public List<Rubro> getRubrosBebidas() throws Exception {
+        try{
+
+            Specification<Rubro> filterByDenominacion = spec.findByProperty("denominacion", "bebidas");
+            Specification<Rubro> filterByRubroPadre = spec.findByForeignAttribute("rubroPadre", "denominacion", "bebidas");
+
+            return baseRepository.findAll(Specification.where(isNotDeleted)
+                    .and(Specification.where(filterByDenominacion)
+                            .or(filterByRubroPadre)));
+
+        } catch (Exception e){
+            throw new Exception(e.getMessage());
         }
     }
 }
