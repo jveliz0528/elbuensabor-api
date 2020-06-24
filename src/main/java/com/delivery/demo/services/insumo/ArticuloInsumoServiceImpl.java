@@ -2,6 +2,7 @@ package com.delivery.demo.services.insumo;
 
 import com.delivery.demo.entities.articulos.ArticuloInsumo;
 import com.delivery.demo.entities.articulos.HistorialStock;
+import com.delivery.demo.entities.comprobantes.Orden;
 import com.delivery.demo.repositories.BaseRepository;
 import com.delivery.demo.services.base.BaseServiceImpl;
 import com.delivery.demo.specifications.SearchSpecification;
@@ -26,6 +27,7 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
     }
 
     SearchSpecification<ArticuloInsumo> spec = new SearchSpecification<ArticuloInsumo>();
+    Specification<ArticuloInsumo> isNotDeleted = spec.isNotDeleted();
 
     @Override
     public Map<String, Object> findAll(String filter, int page, int size, String sortBy, String direction) throws Exception {
@@ -37,8 +39,6 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
                 pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sortBy));
             }
 
-            Specification<ArticuloInsumo> isNotDeleted = spec.isNotDeleted();
-
             Page<ArticuloInsumo> entityPage;
 
             if(filter == null || filter.equals("")){
@@ -47,8 +47,14 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
                 Specification<ArticuloInsumo> filterByDenominacion = spec.findByProperty("denominacion", filter);
                 Specification<ArticuloInsumo> filterByDescripcion = spec.findByProperty("descripcion", filter);
                 Specification<ArticuloInsumo> filterByRubro = spec.findByForeignAttribute("rubro", "denominacion", filter);
+                Specification<ArticuloInsumo> filterByRubroPadre = spec.rubroPadre(filter);
 
-                entityPage = baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByDenominacion).or(filterByDescripcion).or(filterByRubro)), pageable);
+                entityPage = baseRepository.findAll(Specification.where(isNotDeleted)
+                        .and(Specification.where(filterByDenominacion)
+                                .or(filterByDescripcion)
+                                .or(filterByRubro)
+                                .or(filterByRubroPadre))
+                        , pageable);
             }
 
             List<ArticuloInsumo> entities = entityPage.getContent();
@@ -67,14 +73,13 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
     public List<ArticuloInsumo> findAll(String filter) throws Exception {
         try{
 
-            Specification<ArticuloInsumo> isNotDeleted = spec.isNotDeleted();
-
             if(filter == null || filter.equals("")){
                 return baseRepository.findAll(Specification.where(isNotDeleted));
             } else {
                 Specification<ArticuloInsumo> filterByRubro = spec.findByForeignAttribute("rubro", "denominacion", filter);
+                Specification<ArticuloInsumo> filterByRubroPadre = spec.rubroPadre(filter);
 
-                return baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByRubro)));
+                return baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByRubro).or(filterByRubroPadre)));
             }
 
         } catch (Exception e){
@@ -145,6 +150,48 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
             }
 
         } catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public Map<String, Object> getBebidas(String filter, int page, int size, String sortBy, String direction) throws Exception {
+        try {
+            Pageable pageable;
+            if (direction.equals("desc")) {
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy));
+            } else {
+                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sortBy));
+            }
+
+            Page<ArticuloInsumo> entityPage;
+            Specification<ArticuloInsumo> esBebida = spec.esBebida();
+
+
+            if(filter == null || filter.equals("")){
+                entityPage = baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(esBebida)),pageable);
+            } else {
+                Specification<ArticuloInsumo> filterByDenominacion = spec.findByProperty("denominacion", filter);
+                Specification<ArticuloInsumo> filterByDescripcion = spec.findByProperty("descripcion", filter);
+                Specification<ArticuloInsumo> filterByRubro = spec.findByForeignAttribute("rubro", "denominacion", filter);
+                Specification<ArticuloInsumo> filterByRubroPadre = spec.rubroPadre(filter);
+
+                entityPage = baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(esBebida))
+                        .and(Specification.where(filterByDenominacion)
+                                .or(filterByDescripcion)
+                                .or(filterByRubro)
+                                .or(filterByRubroPadre)
+                        ), pageable);
+            }
+
+            List<ArticuloInsumo> entities = entityPage.getContent();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("payload", entities);
+            response.put("length", entityPage.getTotalElements());
+
+            return response;
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }

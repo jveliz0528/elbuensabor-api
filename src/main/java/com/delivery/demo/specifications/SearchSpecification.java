@@ -44,6 +44,24 @@ public class SearchSpecification <E> {
         };
     }
 
+    public Specification<E> esBebida() {
+        return new Specification<E>() {
+            public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query,
+                                         CriteriaBuilder builder) {
+                return builder.equal(root.get("esInsumo"), false);
+            }
+        };
+    }
+
+    public Specification<E> rubroPadre(String filter) {
+        return new Specification<E>() {
+            public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query,
+                                         CriteriaBuilder builder) {
+                return builder.like(root.join("rubro").join("rubroPadre").get("denominacion"), "%"+ filter +"%");
+            }
+        };
+    }
+
     public Specification<E> findByForeignId(String columnName, Long id){
         return new Specification<E>() {
             public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query,
