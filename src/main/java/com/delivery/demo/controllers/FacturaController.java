@@ -47,7 +47,7 @@ public class FacturaController extends BaseController<Factura, FacturaServiceImp
 
     }
 
-    @PutMapping("/anular/{id}")
+    @DeleteMapping("/anular/{id}")
     @Transactional
     public ResponseEntity<?> anularFactura(@PathVariable long id) {
 
