@@ -17,6 +17,7 @@ import javax.persistence.*;
 @Audited
 @Table(name = "rubro")
 public class Rubro extends Base {
+    private String imagen;
     private String denominacion;
     @ManyToOne(optional = true)
     @JoinColumn(name = "fk_rubro_padre")
