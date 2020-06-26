@@ -1,7 +1,7 @@
 package com.delivery.demo.controllers;
 
 import com.delivery.demo.entities.DatosEmpresa;
-import com.delivery.demo.services.datosEmpresas.DatosEmpresaServiceImpl;
+import com.delivery.demo.services.datosEmpresa.DatosEmpresaServiceImpl;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,6 +1,5 @@
 package com.delivery.demo.services.rubro;
 
-import com.delivery.demo.entities.articulos.Categoria;
 import com.delivery.demo.entities.articulos.Rubro;
 import com.delivery.demo.repositories.BaseRepository;
 import com.delivery.demo.services.base.BaseServiceImpl;

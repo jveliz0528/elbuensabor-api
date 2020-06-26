@@ -1,9 +1,8 @@
-package com.delivery.demo.services.datosEmpresas;
+package com.delivery.demo.services.datosEmpresa;
 
 import com.delivery.demo.entities.DatosEmpresa;
 import com.delivery.demo.repositories.BaseRepository;
 import com.delivery.demo.services.base.BaseServiceImpl;
-import com.delivery.demo.specifications.SearchSpecification;
 import org.springframework.stereotype.Service;
 
 @Service

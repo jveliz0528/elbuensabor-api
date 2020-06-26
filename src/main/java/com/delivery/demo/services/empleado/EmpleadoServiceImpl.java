@@ -1,8 +1,6 @@
 package com.delivery.demo.services.empleado;
 
-import com.delivery.demo.entities.usuarios.Cliente;
 import com.delivery.demo.entities.usuarios.Empleado;
-import com.delivery.demo.entities.usuarios.Usuario;
 import com.delivery.demo.repositories.BaseRepository;
 import com.delivery.demo.services.base.BaseServiceImpl;
 import com.delivery.demo.specifications.SearchSpecification;

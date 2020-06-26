@@ -1,8 +1,6 @@
 package com.delivery.demo.controllers;
 
 import com.delivery.demo.entities.articulos.Categoria;
-import com.delivery.demo.repositories.BaseRepository;
-import com.delivery.demo.services.base.BaseServiceImpl;
 import com.delivery.demo.services.categoria.CategoriaServiceImpl;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;

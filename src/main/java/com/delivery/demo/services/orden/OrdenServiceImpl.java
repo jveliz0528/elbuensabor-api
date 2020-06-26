@@ -1,6 +1,5 @@
 package com.delivery.demo.services.orden;
 
-import com.delivery.demo.controllers.ArticuloInsumoController;
 import com.delivery.demo.entities.articulos.*;
 import com.delivery.demo.entities.comprobantes.DetalleOrden;
 import com.delivery.demo.entities.comprobantes.Estado;
@@ -45,9 +44,9 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
         super(baseRepository);
     }
 
-    SearchSpecification<Orden> spec = new SearchSpecification<Orden>();
-    Specification<Orden> isNotDeleted = spec.isNotDeleted();
+
     SearchSpecification<Estado> specEstado = new SearchSpecification<Estado>();
+    SearchSpecification<Cliente> specCliente = new SearchSpecification<Cliente>();
 
     @Override
     public Map<String, Object> findAll(String filter, int page, int size, String sortBy, String direction) throws Exception {
@@ -59,28 +58,28 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
                 pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sortBy));
             }
 
+            SearchSpecification<Orden> spec = new SearchSpecification<Orden>();
+            Specification<Orden> isNotDeleted = spec.isNotDeleted();
             Page<Orden> entityPage;
 
             if(filter == null || filter.equals("")){
                 entityPage = baseRepository.findAll(Specification.where(isNotDeleted),pageable);
             } else {
-                Specification<Orden> filterByEstado = spec.findByForeignAttribute("estado", "denominacion", filter);
-                Specification<Orden> filterById = spec.findByProperty("descripcion", filter);
+                Specification<Orden> filterByEstado = spec.findByEstado(filter);
+                Specification<Orden> filterById = spec.findByProperty("id", filter);
                 Specification<Orden> filterByFormaPago = spec.findByProperty("formaPago", filter);
                 Specification<Orden> filterByNombreCliente = spec.findByForeignAttribute("cliente", "nombre", filter);
                 Specification<Orden> filterByApellidoCliente = spec.findByForeignAttribute("cliente", "apellido", filter);
-                Specification<Orden> filterByNombreCajero = spec.findByForeignAttribute("cajero", "nombre", filter);
-                Specification<Orden> filterByApellidoCajero = spec.findByForeignAttribute("cajero", "apellido", filter);
+                Specification<Orden> filterByClienteUid = spec.findByForeignAttribute("cliente", "uid", filter);
 
                 entityPage = baseRepository.findAll(Specification.where(isNotDeleted)
                         .and(Specification.where(filterByEstado)
-                                .or(filterById)
-                                .or(filterByFormaPago)
+                                .or(filterByClienteUid)
                                 .or(filterByNombreCliente)
                                 .or(filterByApellidoCliente)
-                                .or(filterByNombreCajero)
-                                .or(filterByApellidoCajero)
-                        ), pageable);
+                                .or(filterById)
+                                .or(filterByFormaPago)
+                                ), pageable);
             }
 
             List<Orden> entities = entityPage.getContent();
@@ -99,25 +98,25 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
     public List<Orden> findAll(String filter) throws Exception {
         try{
 
+            SearchSpecification<Orden> spec = new SearchSpecification<Orden>();
+            Specification<Orden> isNotDeleted = spec.isNotDeleted();
+
             if(filter == null || filter.equals("")){
                 return baseRepository.findAll(Specification.where(isNotDeleted));
             } else {
-                Specification<Orden> filterByEstado = spec.findByForeignAttribute("estado", "denominacion", filter);
-                Specification<Orden> filterById = spec.findByProperty("descripcion", filter);
+                Specification<Orden> filterByEstado = spec.findByEstado(filter);
+                Specification<Orden> filterById = spec.findByProperty("id", filter);
                 Specification<Orden> filterByFormaPago = spec.findByProperty("formaPago", filter);
                 Specification<Orden> filterByNombreCliente = spec.findByForeignAttribute("cliente", "nombre", filter);
                 Specification<Orden> filterByApellidoCliente = spec.findByForeignAttribute("cliente", "apellido", filter);
-                Specification<Orden> filterByTelefonoCliente = spec.findByForeignAttribute("cliente", "telefono", filter);
-                Specification<Orden> filterByNombreCajero = spec.findByForeignAttribute("cajero", "nombre", filter);
-                Specification<Orden> filterByApellidoCajero = spec.findByForeignAttribute("cajero", "apellido", filter);
+                Specification<Orden> filterByClienteUid = spec.findByForeignAttribute("cliente", "uid", filter);
 
                 return baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByEstado)
                         .or(filterById)
+                        .or(filterByClienteUid)
                         .or(filterByFormaPago)
                         .or(filterByNombreCliente)
                         .or(filterByApellidoCliente)
-                        .or(filterByNombreCajero)
-                        .or(filterByApellidoCajero)
                 ));
             }
 
@@ -130,7 +129,6 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
     public Orden save(Orden orden, String clienteUid) throws Exception {
         try {
 
-            SearchSpecification<Cliente> specCliente = new SearchSpecification<Cliente>();
             Specification<Cliente> filterByUid = specCliente.findByUid(clienteUid);
             Optional<Cliente> cliente = clienteRepository.findOne(Specification.where(filterByUid));
             orden.setCliente(cliente.get());
@@ -170,8 +168,12 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
     @Override
     public Date calcularHorarioEntrega(Date fechaEntrada, int tiempoOrdenActual, boolean delivery) throws Exception {
         try{
-            Specification<Orden> filterByEnProceso = spec.findByForeignAttribute("estado", "denominacion", "en proceso");
-            Specification<Orden> filterByDemorado = spec.findByForeignAttribute("estado", "denominacion", "demorado");
+
+            SearchSpecification<Orden> spec = new SearchSpecification<Orden>();
+            Specification<Orden> isNotDeleted = spec.isNotDeleted();
+
+            Specification<Orden> filterByEnProceso = spec.findByEstado("en proceso");
+            Specification<Orden> filterByDemorado = spec.findByEstado("demorado");
             List<Orden> ordenesEnCocina = baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByEnProceso).or(filterByDemorado)));
 
             Calendar calendar = Calendar.getInstance();
@@ -235,7 +237,7 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
                 calendar.setTime(orden.getHorarioEntrega());
                 calendar.add(Calendar.MINUTE, 10);
                 orden.setHorarioEntrega(calendar.getTime());
-            } else if (estado.getDenominacion().equals("terminado")){
+            } else if (estado.getDenominacion().equals("listo")){
                 if(this.controlStock(orden.getDetalles())){
                     orden.setDetalles(this.removeStock(orden.getDetalles()));
                 } else {
@@ -356,14 +358,18 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
             }
 
             Page<Orden> entityPage;
-            Specification<Orden> filterByDemorado = spec.findByForeignAttribute("estado", "denominacion", "demorado");
-            Specification<Orden> filterByEnProceso = spec.findByForeignAttribute("estado", "denominacion", "en proceso");
+
+            SearchSpecification<Orden> spec = new SearchSpecification<Orden>();
+            Specification<Orden> isNotDeleted = spec.isNotDeleted();
+
+            Specification<Orden> filterByDemorado = spec.findByEstado("demorado");
+            Specification<Orden> filterByEnProceso = spec.findByEstado("en proceso");
 
 
             if(filter == null || filter.equals("")){
                 entityPage = baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByEnProceso).or(filterByDemorado)),pageable);
             } else {
-                Specification<Orden> filterByEstado = spec.findByForeignAttribute("estado", "denominacion", filter);
+                Specification<Orden> filterByEstado = spec.findByEstado(filter);
                 Specification<Orden> filterById = spec.findByProperty("descripcion", filter);
                 Specification<Orden> filterByFormaPago = spec.findByProperty("formaPago", filter);
                 Specification<Orden> filterByNombreCliente = spec.findByForeignAttribute("cliente", "nombre", filter);
@@ -386,6 +392,52 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
 
             return response;
         } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Orden> getOrdenesPendientes(String clienteUid) throws Exception {
+        try{
+
+            SearchSpecification<Orden> spec = new SearchSpecification<Orden>();
+            Specification<Orden> isNotDeleted = spec.isNotDeleted();
+
+            Specification<Orden> filterByCliente = spec.findByForeignAttribute("cliente", "uid", clienteUid);
+            Specification<Orden> filterByPendiente = spec.findByEstado("pendiente");
+            Specification<Orden> filterByEnProceso = spec.findByEstado("en proceso");
+            Specification<Orden> filterByDemorado = spec.findByEstado("demorado");
+            Specification<Orden> filterByListo = spec.findByEstado("listo");
+            Specification<Orden> filterByEnCamino = spec.findByEstado("en camino");
+
+            return baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByCliente)).and(Specification.where(filterByPendiente)
+                    .or(filterByEnProceso)
+                    .or(filterByDemorado)
+                    .or(filterByListo)
+                    .or(filterByEnCamino)
+            ));
+
+        } catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Orden> getOrdenesPasadas(String clienteUid) throws Exception {
+        try{
+
+            SearchSpecification<Orden> spec = new SearchSpecification<Orden>();
+            Specification<Orden> isNotDeleted = spec.isNotDeleted();
+
+            Specification<Orden> filterByCliente = spec.findByForeignAttribute("cliente", "uid", clienteUid);
+            Specification<Orden> filterByCancelado = spec.findByEstado("cancelado");
+            Specification<Orden> filterByEntregado = spec.findByEstado("entregado");
+
+            return baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByCliente))
+                    .and(Specification.where(filterByCancelado).or(filterByEntregado)
+            ));
+
+        } catch (Exception e){
             throw new Exception(e.getMessage());
         }
     }

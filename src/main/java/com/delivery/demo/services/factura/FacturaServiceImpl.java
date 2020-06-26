@@ -1,7 +1,6 @@
 package com.delivery.demo.services.factura;
 
 import com.delivery.demo.entities.DatosEmpresa;
-import com.delivery.demo.entities.comprobantes.DetalleOrden;
 import com.delivery.demo.entities.comprobantes.Estado;
 import com.delivery.demo.entities.comprobantes.Factura;
 import com.delivery.demo.entities.comprobantes.Orden;
@@ -62,11 +61,9 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
             if(filter == null || filter.equals("")){
                 entityPage = baseRepository.findAll(Specification.where(isNotDeleted),pageable);
             } else {
-                Specification<Factura> filterByEstado = spec.findByForeignAttribute("estado", "denominacion", filter);
-                Specification<Factura> filterById = spec.findByProperty("descripcion", filter);
+                Specification<Factura> filterByEstado = spec.findByEstado(filter);
+                Specification<Factura> filterById = spec.findByProperty("id", filter);
                 Specification<Factura> filterByFormaPago = spec.findByProperty("formaPago", filter);
-                Specification<Factura> filterByNombreCliente = spec.findByForeignAttribute("cliente", "nombre", filter);
-                Specification<Factura> filterByApellidoCliente = spec.findByForeignAttribute("cliente", "apellido", filter);
                 Specification<Factura> filterByNombreCajero = spec.findByForeignAttribute("cajero", "nombre", filter);
                 Specification<Factura> filterByApellidoCajero = spec.findByForeignAttribute("cajero", "apellido", filter);
 
@@ -74,8 +71,6 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
                         .and(Specification.where(filterByEstado)
                                 .or(filterById)
                                 .or(filterByFormaPago)
-                                .or(filterByNombreCliente)
-                                .or(filterByApellidoCliente)
                                 .or(filterByNombreCajero)
                                 .or(filterByApellidoCajero)
                         ), pageable);
@@ -103,19 +98,14 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
                 return baseRepository.findAll(Specification.where(isNotDeleted));
             } else {
                 Specification<Factura> filterByEstado = spec.findByForeignAttribute("estado", "denominacion", filter);
-                Specification<Factura> filterById = spec.findByProperty("descripcion", filter);
+                Specification<Factura> filterById = spec.findByProperty("id", filter);
                 Specification<Factura> filterByFormaPago = spec.findByProperty("formaPago", filter);
-                Specification<Factura> filterByNombreCliente = spec.findByForeignAttribute("cliente", "nombre", filter);
-                Specification<Factura> filterByApellidoCliente = spec.findByForeignAttribute("cliente", "apellido", filter);
-                Specification<Factura> filterByTelefonoCliente = spec.findByForeignAttribute("cliente", "telefono", filter);
                 Specification<Factura> filterByNombreCajero = spec.findByForeignAttribute("cajero", "nombre", filter);
                 Specification<Factura> filterByApellidoCajero = spec.findByForeignAttribute("cajero", "apellido", filter);
 
                 return baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(filterByEstado)
                         .or(filterById)
                         .or(filterByFormaPago)
-                        .or(filterByNombreCliente)
-                        .or(filterByApellidoCliente)
                         .or(filterByNombreCajero)
                         .or(filterByApellidoCajero)
                 ));
@@ -157,11 +147,11 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
             factura.setCajero(empleado.get());
 
             /* DATOS EMPRESA */
-            Optional<DatosEmpresa> datosEmpresa = datosEmpresaRepository.findById(1l);
+            Optional<DatosEmpresa> datosEmpresa = datosEmpresaRepository.findById(1L);
             factura.setDatosEmpresa(datosEmpresa.get());
 
             /* ACTUALIZAR ESTADO ORDEN */
-            filterByDenominacion = specEstado.findByProperty("denominacion", "pagado");
+            filterByDenominacion = specEstado.findByProperty("denominacion", "entregado");
             Optional<Estado> estadoOrden = estadoRepository.findOne(Specification.where(filterByDenominacion));
             orden.setEstado(estadoOrden.get());
 

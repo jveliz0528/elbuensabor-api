@@ -74,4 +74,32 @@ public class OrdenController extends BaseController<Orden, OrdenServiceImpl> {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/pendientes")
+    public ResponseEntity<?> getOrdenesPendientes(@RequestParam String clienteUid) {
+        try {
+
+            return ResponseEntity.status(HttpStatus.OK).body(service.getOrdenesPendientes(clienteUid));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
+        }
+    }
+
+    @GetMapping("/pasadas")
+    public ResponseEntity<?> getOrdenesPasadas(@RequestParam String clienteUid) {
+        try {
+
+            return ResponseEntity.status(HttpStatus.OK).body(service.getOrdenesPasadas(clienteUid));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
+        }
+    }
 }

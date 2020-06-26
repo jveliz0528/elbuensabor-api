@@ -1,6 +1,5 @@
 package com.delivery.demo.services.usuario;
 
-import com.delivery.demo.entities.usuarios.Cliente;
 import com.delivery.demo.entities.usuarios.Usuario;
 import com.delivery.demo.repositories.BaseRepository;
 import com.delivery.demo.services.base.BaseServiceImpl;
@@ -8,7 +7,6 @@ import com.delivery.demo.specifications.SearchSpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.Optional;
 
 @Service

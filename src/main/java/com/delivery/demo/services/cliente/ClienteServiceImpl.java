@@ -128,45 +128,16 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implement
         try {
 
             Specification<Cliente> filterByUID = spec.findByUid(uid);
-            Optional<Cliente> entityOptional = baseRepository.findOne(Specification.where(filterByUID));
+            Optional<Cliente> clienteOptional = baseRepository.findOne(Specification.where(filterByUID));
 
-            Cliente entityUpdated = entityOptional.get();
-
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            entityUpdated.setUltimaActualizacion(timestamp);
-            entityUpdated.getDireccionesEnvio().add(direccion);
-
-            return baseRepository.save(entityUpdated);
-
-        } catch (Exception e) {
-
-            throw new Exception(e.getMessage());
-
-        }
-    }
-
-    @Override
-    public boolean removeDireccion(Long direccionId, String uid) throws Exception {
-        try {
-
-            Specification<Cliente> filterByUID = spec.findByUid(uid);
-            Optional<Cliente> entityOptional = baseRepository.findOne(Specification.where(filterByUID));
-
-            Cliente entityUpdated = entityOptional.get();
+            Cliente cliente = clienteOptional.get();
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            entityUpdated.setUltimaActualizacion(timestamp);
+            cliente.setUltimaActualizacion(timestamp);
+            direccion.setUltimaActualizacion(timestamp);
+            cliente.getDireccionesEnvio().add(direccion);
 
-            for (DireccionDelivery direccionAux: entityUpdated.getDireccionesEnvio()){
-                if(direccionAux.getId() == direccionId){
-                    direccionAux.setEliminado(true);
-                    direccionAux.setUltimaActualizacion(timestamp);
-                    direccionAux = direccionDeliveryRepository.save(direccionAux);
-                    return true;
-                }
-            }
-
-            return false;
+            return baseRepository.save(cliente);
 
         } catch (Exception e) {
 
@@ -180,24 +151,19 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implement
         try {
 
             Specification<Cliente> filterByUID = spec.findByUid(uid);
-            Optional<Cliente> entityOptional = baseRepository.findOne(Specification.where(filterByUID));
+            Optional<Cliente> clienteOptional = baseRepository.findOne(Specification.where(filterByUID));
 
-            Cliente entityUpdated = entityOptional.get();
+            Cliente cliente = clienteOptional.get();
 
             List<DireccionDelivery> direcciones = new ArrayList<>();
 
-            if (entityUpdated.getDireccionesEnvio().size() > 0){
-                for (DireccionDelivery direccionAux: entityUpdated.getDireccionesEnvio()){
-                    if(!direccionAux.isEliminado()){
-                        direcciones.add(direccionAux);
-                    }
+            for (DireccionDelivery direccionAux: cliente.getDireccionesEnvio()){
+                if(!direccionAux.isEliminado()){
+                    direcciones.add(direccionAux);
                 }
-
-                return direcciones;
-
-            } else {
-                throw new Exception("No existen direcciones");
             }
+
+            return direcciones;
 
         } catch (Exception e) {
 

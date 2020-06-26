@@ -47,21 +47,6 @@ public class ClienteController extends BaseController<Cliente, ClienteServiceImp
 
     }
 
-    @PutMapping("/direccion/remove")
-    public ResponseEntity<?> removeDireccion(@RequestParam Long direccionId, @RequestParam String clienteUid ) {
-
-        try {
-
-            return ResponseEntity.status(HttpStatus.OK).body(service.removeDireccion(direccionId, clienteUid));
-
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body
-                    ("{\"error\": \""+e.getMessage()+"\"}");
-        }
-
-    }
-
     @GetMapping("/direcciones")
     public ResponseEntity<?> getDirecciones(@RequestParam String clienteUid ) {
 

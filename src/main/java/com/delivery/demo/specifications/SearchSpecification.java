@@ -1,6 +1,7 @@
 package com.delivery.demo.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -76,6 +77,15 @@ public class SearchSpecification <E> {
             public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query,
                                          CriteriaBuilder builder) {
                 return builder.like(root.join(columnName).get(propertyName), "%" + propertyValue + "%");
+            }
+        };
+    }
+
+    public Specification<E> findByEstado(String propertyValue) {
+        return new Specification<E>() {
+            public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query,
+                                         CriteriaBuilder builder) {
+                return builder.like(root.join("estado").get("denominacion"), "%" + propertyValue + "%");
             }
         };
     }

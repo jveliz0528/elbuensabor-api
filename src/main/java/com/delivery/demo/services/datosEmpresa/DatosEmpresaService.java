@@ -1,4 +1,4 @@
-package com.delivery.demo.services.datosEmpresas;
+package com.delivery.demo.services.datosEmpresa;
 
 import com.delivery.demo.entities.DatosEmpresa;
 import com.delivery.demo.services.base.BaseService;

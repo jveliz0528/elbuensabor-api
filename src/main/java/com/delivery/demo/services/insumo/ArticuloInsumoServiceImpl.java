@@ -2,7 +2,6 @@ package com.delivery.demo.services.insumo;
 
 import com.delivery.demo.entities.articulos.ArticuloInsumo;
 import com.delivery.demo.entities.articulos.HistorialStock;
-import com.delivery.demo.entities.comprobantes.Orden;
 import com.delivery.demo.repositories.BaseRepository;
 import com.delivery.demo.services.base.BaseServiceImpl;
 import com.delivery.demo.specifications.SearchSpecification;

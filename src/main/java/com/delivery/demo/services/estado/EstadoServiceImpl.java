@@ -17,21 +17,4 @@ public class EstadoServiceImpl extends BaseServiceImpl<Estado, Long> implements 
         super(baseRepository);
     }
 
-    SearchSpecification<Estado> spec = new SearchSpecification<Estado>();
-
-    @Override
-    public Estado getOneByDenominacion(String denominacion) throws Exception {
-        try {
-
-            Specification<Estado> filterByDenominacion = spec.findByProperty("denominacion", denominacion);
-            Optional<Estado> entityOptional = baseRepository.findOne(Specification.where(filterByDenominacion));
-
-            return entityOptional.get();
-
-        } catch (Exception e) {
-
-            throw new Exception(e.getMessage());
-
-        }
-    }
 }
