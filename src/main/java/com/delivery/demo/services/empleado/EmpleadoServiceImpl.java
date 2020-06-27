@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +106,25 @@ public class EmpleadoServiceImpl extends BaseServiceImpl<Empleado, Long> impleme
             Optional<Empleado> entityOptional = baseRepository.findOne(Specification.where(filterByUID));
 
             return entityOptional.get();
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
+        }
+    }
+
+    @Override
+    public Empleado save(Empleado entity) throws Exception {
+        try {
+
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            entity.setUltimaActualizacion(timestamp);
+            entity.setFechaAlta(timestamp);
+
+            entity = baseRepository.save(entity);
+
+            return entity;
 
         } catch (Exception e) {
 
