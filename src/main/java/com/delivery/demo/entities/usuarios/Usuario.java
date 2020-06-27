@@ -24,7 +24,6 @@ public class Usuario extends Base {
     private String nombre;
     private String apellido;
     private String telefono;
-    @Column(unique = true)
     private String email;
     @Column(unique = true)
     private String uid;
