@@ -64,4 +64,25 @@
 		</plugins>
 	</build>
 
+	<developers>
+		<developer>
+			<name>Aaron Castro</name>
+			<id>Aaron-CR</id>
+			<email>castroaaron@outlook.com</email>
+			<organization>UTN FRM</organization>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Florencia Salcedo</name>
+			<id>Florsalcedowd</id>
+			<email>florenciasalcedo13@gmail.com</email>
+			<organization>UTN FRM</organization>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+
 </project>
