@@ -45,9 +45,15 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
     }
 
 
+    SearchSpecification<Orden> spec = new SearchSpecification<Orden>();
+    Specification<Orden> isNotDeleted = spec.isNotDeleted();
     SearchSpecification<Estado> specEstado = new SearchSpecification<Estado>();
     SearchSpecification<Cliente> specCliente = new SearchSpecification<Cliente>();
 
+    /*
+     * @desc This method gets all orders paged and sorts and filter data
+     * @return Map<String, Object> ordenes or new Exception()
+     * */
     @Override
     public Map<String, Object> findAll(String filter, int page, int size, String sortBy, String direction) throws Exception {
         try {
@@ -58,8 +64,6 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
                 pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sortBy));
             }
 
-            SearchSpecification<Orden> spec = new SearchSpecification<Orden>();
-            Specification<Orden> isNotDeleted = spec.isNotDeleted();
             Page<Orden> entityPage;
 
             if(filter == null || filter.equals("")){
@@ -94,12 +98,13 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
         }
     }
 
+    /*
+     * @desc This method gets a list of orders and filters data if filter string exists
+     * @return List<Orden> ordenes or new Exception()
+     * */
     @Override
     public List<Orden> findAll(String filter) throws Exception {
         try{
-
-            SearchSpecification<Orden> spec = new SearchSpecification<Orden>();
-            Specification<Orden> isNotDeleted = spec.isNotDeleted();
 
             if(filter == null || filter.equals("")){
                 return baseRepository.findAll(Specification.where(isNotDeleted));
@@ -125,6 +130,10 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
         }
     }
 
+    /*
+    * @desc This method completes the information of an order and saves it in the database
+    * @return Entity "Orden" saved
+    * */
     @Override
     public Orden save(Orden orden, String clienteUid) throws Exception {
         try {
@@ -156,8 +165,6 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
                 throw new Exception("Uno o más productos están fuera de stock");
             }
 
-
-
         } catch (Exception e) {
 
             throw new Exception(e.getMessage());
@@ -165,6 +172,11 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
         }
     }
 
+    /*
+     * @desc This method calculates the estimated delivery time of an order
+     *       taking into account the orders found in the kitchen
+     * @return Date horarioEntrega
+     * */
     @Override
     public Date calcularHorarioEntrega(Date fechaEntrada, int tiempoOrdenActual, boolean delivery) throws Exception {
         try{
@@ -207,8 +219,13 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
         }
     }
 
+    /*
+     * @desc This method calculates the total cooking time in minutes of the order
+     *       taking into account the cooking time of each manufactured product that it includes
+     * @return int tiempoTotal or 0
+     * */
     @Override
-    public int calcularTiempoTotalPreparacion(List<DetalleOrden> detallesOrden) throws Exception {
+    public int calcularTiempoTotalPreparacion(List<DetalleOrden> detallesOrden){
         if (detallesOrden.size() > 0){
             int tiempoTotal = 0;
 
@@ -224,6 +241,13 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
     }
 
 
+    /*
+     * @desc This method updates the order status and performs different operations
+     * according to the selected status:
+     * DEMORADO: adds 10' to the order delivery time
+     * EN PROCESO: calls controlStock(). If true calls removeStock(), else set order's state to "CANCELADO"
+     * @return Orden ordenUpdated or new Exception()
+     * */
     @Override
     public Orden actualizarEstado(Estado estado, Long ordenId) throws Exception {
         try {
@@ -237,11 +261,14 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
                 calendar.setTime(orden.getHorarioEntrega());
                 calendar.add(Calendar.MINUTE, 10);
                 orden.setHorarioEntrega(calendar.getTime());
-            } else if (estado.getDenominacion().equals("listo")){
+            } else if (estado.getDenominacion().equals("en proceso")){
                 if(this.controlStock(orden.getDetalles())){
                     orden.setDetalles(this.removeStock(orden.getDetalles()));
                 } else {
-                    throw new Exception("Uno o más artículos están fuera de stock");
+                    Specification<Estado> cancelado = specEstado.findByProperty("denominacion", "cancelado");
+                    Optional<Estado> estadoCancelado = estadoRepository.findOne(Specification.where(cancelado));
+
+                    orden.setEstado(estadoCancelado.get());
                 }
             }
 
@@ -259,6 +286,10 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
         }
     }
 
+    /*
+     * @desc Sets the order carrier and change order's state to "EN CAMINO"
+     * @return Orden ordenUpdated
+     * */
     @Override
     public Orden addRepartidor(Empleado repartidor, Long ordenId) throws Exception {
         try{
@@ -283,6 +314,11 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
         }
     }
 
+
+    /*
+     * @desc This method controls the existence of the product stock
+     * @return False if the stock is insufficient for any product, true if the stock is sufficient
+     * */
     @Override
     public boolean controlStock(List<DetalleOrden> detalles) {
         for (DetalleOrden detalleOrdenAux : detalles){
@@ -305,6 +341,12 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
         return true;
     }
 
+
+    /*
+     * @desc This method removes the stock of the articles present in the order details
+     * and update articles in the database
+     * @return List<DetallesOrden> detalles or new Exception()
+     * */
     @Override
     public List<DetalleOrden> removeStock(List<DetalleOrden> detalles) throws Exception {
 
@@ -347,6 +389,10 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
         }
     }
 
+    /*
+     * @desc This method gets all the orders paged where state is "EN PROCESO" or "DEMORADO"
+     * @return Map<String, Object> ordenesEnCocina or new Exception()
+     * */
     @Override
     public Map<String, Object> ordenesEnCocina(String filter, int page, int size, String sortBy, String direction) throws Exception {
         try {
@@ -396,6 +442,12 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
         }
     }
 
+
+    /*
+     * @desc This method gets all orders by Cliente where state is "PENDIENTE", "EN PROCESO", "DEMORADO",
+     *       "LISTO" or "EN CAMINO"
+     * @return List<Orden> ordenesPendientes or new Exception()
+     * */
     @Override
     public List<Orden> getOrdenesPendientes(String clienteUid) throws Exception {
         try{
@@ -422,6 +474,10 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
         }
     }
 
+    /*
+     * @desc This method gets all orders by Cliente where state is "ENTREGADO" or "CANCELADO"
+     * @return List<Orden> ordenesPasadas or new Exception()
+     * */
     @Override
     public List<Orden> getOrdenesPasadas(String clienteUid) throws Exception {
         try{

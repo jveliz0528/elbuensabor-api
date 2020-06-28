@@ -99,6 +99,10 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implement
         }
     }
 
+    /*
+     * @desc This method completes a costumer entity with its Rol and saves it into the database
+     * @return Cliente cliente or new Exception()
+     * */
     @Override
     public Cliente save(Cliente entity) throws Exception {
         try {
@@ -123,6 +127,10 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implement
         }
     }
 
+    /*
+     * @desc This method adds a new delivery address to a customer
+     * @return Cliente cliente or new Exception()
+     * */
     @Override
     public Cliente addDireccion(DireccionDelivery direccion, String uid) throws Exception {
         try {
@@ -146,6 +154,10 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implement
         }
     }
 
+    /*
+     * @desc This method gets all customer's delivery addresses
+     * @return List<DireccionDelivery> direcciones or new Exception()
+     * */
     @Override
     public List<DireccionDelivery> getDirecciones(String uid) throws Exception {
         try {
@@ -172,6 +184,10 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long> implement
         }
     }
 
+    /*
+     * @desc This method gets one customer by its uid
+     * @return Cliente cliente or new Exception()
+     * */
     @Override
     public Cliente findByUID(String uid) throws Exception {
         try {

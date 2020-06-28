@@ -24,6 +24,7 @@ public class ArticuloManufacturadoServiceImpl extends BaseServiceImpl<ArticuloMa
 
     SearchSpecification<ArticuloManufacturado> spec = new SearchSpecification<ArticuloManufacturado>();
 
+
     @Override
     public Map<String, Object> findAll(String filter, int page, int size, String sortBy, String direction) throws Exception {
         try {

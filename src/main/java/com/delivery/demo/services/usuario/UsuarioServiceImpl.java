@@ -18,6 +18,10 @@ public class UsuarioServiceImpl extends BaseServiceImpl<Usuario, Long> implement
 
     SearchSpecification<Usuario> spec = new SearchSpecification<Usuario>();
 
+    /*
+     * @desc This method gets one user by its uid
+     * @return Usuario usuario or new Exception()
+     * */
     @Override
     public Usuario findByUID(String uid) throws Exception {
         try {

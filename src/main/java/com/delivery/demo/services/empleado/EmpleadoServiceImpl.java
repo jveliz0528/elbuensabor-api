@@ -98,6 +98,10 @@ public class EmpleadoServiceImpl extends BaseServiceImpl<Empleado, Long> impleme
         }
     }
 
+    /*
+     * @desc This method gets one employee by its uid
+     * @return Empleado empleado or new Exception()
+     * */
     @Override
     public Empleado findByUID(String uid) throws Exception {
         try {

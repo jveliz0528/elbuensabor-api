@@ -117,6 +117,10 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
     }
 
 
+    /*
+     * @desc This method create a new invoice and saves it into the database
+     * @return Factura factura or new Exception()
+     * */
     @Override
     public Factura save(Long ordenId, String cajeroUid) throws Exception {
         try {
@@ -170,6 +174,10 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
         }
     }
 
+    /*
+     * @desc This method get one invoice by its order id
+     * @return Factura factura or new Exception()
+     * */
     @Override
     public Factura getOneByOrden(Long ordenId) throws Exception {
         try{
@@ -181,6 +189,10 @@ public class FacturaServiceImpl extends BaseServiceImpl<Factura, Long> implement
         }
     }
 
+    /*
+     * @desc This method gets one invoice by its id and updates its state to "ANULADO"
+     * @return True if successful or new Exception()
+     * */
     @Override
     public boolean anularFactura(Long id) throws Exception {
         try {

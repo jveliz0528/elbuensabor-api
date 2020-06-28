@@ -234,6 +234,10 @@ public class RubroServiceImpl extends BaseServiceImpl<Rubro, Long> implements Ru
         }
     }
 
+    /*
+     * @desc This method gets a list of all the items where its name or the name of its parent item is "bebidas"
+     * @return List<Rubros> rubrosBebida or new Exception()
+     * */
     @Override
     public List<Rubro> getRubrosBebidas() throws Exception {
         try{

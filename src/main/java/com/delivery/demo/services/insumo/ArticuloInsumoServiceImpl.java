@@ -86,6 +86,11 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
         }
     }
 
+    /*
+     * @desc This method saves a supply article and if stockActual is greater than 0 creates a new
+     * HistorialStock and add it to the article historialStock
+     * @return ArticuloInsumo articuloInsumo or new Exception()
+     * */
     @Override
     public ArticuloInsumo save(ArticuloInsumo entity) throws Exception {
         try {
@@ -108,6 +113,10 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
         }
     }
 
+    /*
+     * @desc This method add stock to a supply article and creates a new HistorialStock for it
+     * @return ArticuloInsumo articuloInsumo or new Exception()
+     * */
     @Override
     public ArticuloInsumo addStock(Long articuloId, double cantidad) throws Exception {
         try {
@@ -128,6 +137,10 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
         }
     }
 
+    /*
+     * @desc This method removes stock to a supply article and creates a new HistorialStock for it
+     * @return ArticuloInsumo articuloInsumo or new Exception()
+     * */
     @Override
     public ArticuloInsumo removeStock(Long articuloId, double cantidad) throws Exception {
         try {
@@ -153,6 +166,11 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
         }
     }
 
+    /*
+     * @desc This method gets all supplies where propery "esInsumo" is false,
+     * pages them and sort and/or filter the data if filter string exists
+     * @return Map<String, Object> bebidas or new Exception()
+     * */
     @Override
     public Map<String, Object> getBebidas(String filter, int page, int size, String sortBy, String direction) throws Exception {
         try {
