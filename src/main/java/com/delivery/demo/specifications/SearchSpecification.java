@@ -6,6 +6,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.sql.Date;
 
 public class SearchSpecification <E> {
     public Specification<E> findByProperty(String propertyName, String propertyValue) {
@@ -89,10 +90,19 @@ public class SearchSpecification <E> {
         };
     }
 
-    public Specification<E> findBetweenDates(String fechaInicio, String fechaFin){
+    public Specification<E> findBetweenDates(Date fechaInicio, Date fechaFin){
         return  new Specification<E>() {
             public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-                return builder.between(root.get("fecha"), fechaInicio, fechaFin);
+                return builder.between(root.<Date>get("fecha"), fechaInicio, fechaFin);
+            }
+        };
+    }
+
+    public Specification<E> findByOutOfStock(){
+        return new Specification<E>() {
+            @Override
+            public Predicate toPredicate(Root<E> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder builder) {
+                return builder.greaterThan(root.get("stockMinimo"), root.get("stockActual"));
             }
         };
     }

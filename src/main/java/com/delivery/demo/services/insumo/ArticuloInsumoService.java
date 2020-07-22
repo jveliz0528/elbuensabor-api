@@ -9,4 +9,5 @@ public interface ArticuloInsumoService extends BaseService<ArticuloInsumo, Long>
     public ArticuloInsumo addStock(Long articuloId, double cantidad) throws Exception;
     public ArticuloInsumo removeStock(Long articuloId, double cantidad) throws Exception;
     public Map<String, Object> getBebidas(String filter, int page, int size, String sortBy, String direction) throws Exception;
+
 }
