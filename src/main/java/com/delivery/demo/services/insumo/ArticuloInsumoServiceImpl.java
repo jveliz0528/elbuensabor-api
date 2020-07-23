@@ -196,5 +196,4 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
         }
     }
 
-
 }

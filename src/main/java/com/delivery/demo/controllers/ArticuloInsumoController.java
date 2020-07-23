@@ -50,8 +50,8 @@ public class ArticuloInsumoController extends BaseController<ArticuloInsumo, Art
 
     }
 
-    @GetMapping("/bebidas")
-    public ResponseEntity<?> getBebidas(@RequestParam(required = false) String filter) {
+    @GetMapping("/allPublic")
+    public ResponseEntity<?> findAllPublic(@RequestParam(required = false) String filter) {
 
         try {
 

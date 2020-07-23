@@ -81,4 +81,27 @@ public class ArticuloManufacturadoServiceImpl extends BaseServiceImpl<ArticuloMa
             throw new Exception(e.getMessage());
         }
     }
+
+    @Override
+    public List<ArticuloManufacturado> findAllPublic(String filter) throws Exception {
+        try{
+
+            Specification<ArticuloManufacturado> isNotDeleted = spec.isNotDeleted();
+            Specification<ArticuloManufacturado> isPublic = spec.isNotHidden();
+
+            if(filter == null || filter.equals("")){
+                return baseRepository.findAll(Specification.where(isNotDeleted));
+            } else {
+                Specification<ArticuloManufacturado> filterByCategoria = spec.findByForeignAttribute("categoria", "denominacion", filter);
+                Specification<ArticuloManufacturado> filterByDenominacion = spec.findByProperty("denominacion", filter);
+                Specification<ArticuloManufacturado> filterByDescripcion = spec.findByProperty("descripcion", filter);
+
+                return baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(isPublic))
+                        .and(Specification.where(filterByDenominacion).or(filterByDescripcion).or(filterByCategoria)));
+            }
+
+        } catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
 }
