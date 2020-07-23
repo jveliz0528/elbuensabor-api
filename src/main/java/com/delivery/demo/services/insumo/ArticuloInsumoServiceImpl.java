@@ -165,47 +165,33 @@ public class ArticuloInsumoServiceImpl extends BaseServiceImpl<ArticuloInsumo, L
 
     /*
      * @desc This method gets all supplies where propery "esInsumo" is false,
-     * pages them and sort and/or filter the data if filter string exists
-     * @return Map<String, Object> bebidas or new Exception()
+     * and filter the data if filter string exists
+     * @return List<ArticuloInsumo> bebidas or new Exception()
      * */
     @Override
-    public Map<String, Object> getBebidas(String filter, int page, int size, String sortBy, String direction) throws Exception {
-        try {
-            Pageable pageable;
-            if (direction.equals("desc")) {
-                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy));
-            } else {
-                pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sortBy));
-            }
+    public List<ArticuloInsumo> getBebidas(String filter) throws Exception {
+        try{
 
-            Page<ArticuloInsumo> entityPage;
             Specification<ArticuloInsumo> esBebida = spec.esBebida();
-
+            Specification<ArticuloInsumo> esPublico = spec.isNotHidden();
 
             if(filter == null || filter.equals("")){
-                entityPage = baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(esBebida)),pageable);
+                return baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(esBebida)).and(Specification.where(esPublico)));
             } else {
                 Specification<ArticuloInsumo> filterByDenominacion = spec.findByProperty("denominacion", filter);
                 Specification<ArticuloInsumo> filterByDescripcion = spec.findByProperty("descripcion", filter);
                 Specification<ArticuloInsumo> filterByRubro = spec.findByForeignAttribute("rubro", "denominacion", filter);
                 Specification<ArticuloInsumo> filterByRubroPadre = spec.rubroPadre(filter);
 
-                entityPage = baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(esBebida))
+                return baseRepository.findAll(Specification.where(isNotDeleted).and(Specification.where(esBebida)).and(Specification.where(esPublico))
                         .and(Specification.where(filterByDenominacion)
                                 .or(filterByDescripcion)
                                 .or(filterByRubro)
                                 .or(filterByRubroPadre)
-                        ), pageable);
+                        ));
             }
 
-            List<ArticuloInsumo> entities = entityPage.getContent();
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("payload", entities);
-            response.put("length", entityPage.getTotalElements());
-
-            return response;
-        } catch (Exception e) {
+        } catch (Exception e){
             throw new Exception(e.getMessage());
         }
     }

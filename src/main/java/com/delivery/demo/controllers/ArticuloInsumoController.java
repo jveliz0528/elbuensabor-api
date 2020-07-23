@@ -51,17 +51,18 @@ public class ArticuloInsumoController extends BaseController<ArticuloInsumo, Art
     }
 
     @GetMapping("/bebidas")
-    public ResponseEntity<Map<String, Object>> getBebidas(
-            @RequestParam(required = false) String filter,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "desc") String direction) {
+    public ResponseEntity<?> getBebidas(@RequestParam(required = false) String filter) {
+
         try {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(service.getBebidas(filter, page, size, sortBy, direction));
+
+            return ResponseEntity.status(HttpStatus.OK).body(service.getBebidas(filter));
+
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
         }
+
     }
 }
