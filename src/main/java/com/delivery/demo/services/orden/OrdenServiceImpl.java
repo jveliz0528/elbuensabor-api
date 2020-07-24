@@ -368,6 +368,8 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
                         articuloInsumo.setUltimaActualizacion(timestamp);
                         articuloInsumo = insumoRepository.save(articuloInsumo);
                         detalleReceta.setInsumo(articuloInsumo);
+                        detalleReceta.setUltimaActualizacion(timestamp);
+                        detalleOrdenAux.setUltimaActualizacion(timestamp);
                     }
                 }
 
@@ -379,6 +381,7 @@ public class OrdenServiceImpl extends BaseServiceImpl<Orden, Long> implements Or
                     articuloInsumo.setUltimaActualizacion(timestamp);
                     articuloInsumo = insumoRepository.save(articuloInsumo);
                     detalleOrdenAux.setInsumo(articuloInsumo);
+                    detalleOrdenAux.setUltimaActualizacion(timestamp);
                 }
             }
 
