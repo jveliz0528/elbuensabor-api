@@ -10,4 +10,6 @@ public interface ReportesService {
     public List<GraficosDTO> getOutOfStock() throws Exception;
     public List<Orden> getOrdenesPorPeriodo(String clienteUid, Date fechaInicio, Date fechaFin) throws Exception;
     public List<GraficosDTO> getIngresosPorPeriodo(Date fechaInicio, Date fechaFin) throws Exception;
+    public List<GraficosDTO> getInsumoMasVendido(Date fechaInicio, Date fechaFin) throws Exception;
+    public List<GraficosDTO> getManufacturadoMasVendido(Date fechaInicio, Date fechaFin) throws Exception;
 }

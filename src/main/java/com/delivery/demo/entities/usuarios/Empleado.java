@@ -20,7 +20,6 @@ import java.util.Date;
 public class Empleado extends Usuario {
     @Column(unique = true)
     private String cuil;
-    private Date fechaDeIngreso;
     @OneToOne(cascade= CascadeType.ALL)
     @JoinColumn(name = "fk_direccion")
     private DireccionLegal direccion;

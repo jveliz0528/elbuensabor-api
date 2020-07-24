@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @RestController
@@ -55,6 +58,41 @@ public class ReportesController {
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(reportesService.getIngresosPorPeriodo(fechaInicio, fechaFin));
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/topInsumos")
+    public ResponseEntity<?> getTopInsumos(
+            @RequestParam Date fechaInicio,
+            @RequestParam Date fechaFin) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(reportesService.getInsumoMasVendido(fechaInicio, fechaFin));
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/topManufacturados")
+    public ResponseEntity<?> getTopManufacturados(
+            @RequestParam Date fechaInicio,
+            @RequestParam Date fechaFin) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(reportesService.getManufacturadoMasVendido(fechaInicio, fechaFin));
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/time")
+    public ResponseEntity<?> getLocalTime(){
+        try {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            return ResponseEntity.status(HttpStatus.OK).body(dtf.format(now));
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

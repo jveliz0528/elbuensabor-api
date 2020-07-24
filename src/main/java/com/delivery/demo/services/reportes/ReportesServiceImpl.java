@@ -5,6 +5,7 @@ import com.delivery.demo.entities.articulos.ArticuloInsumo;
 import com.delivery.demo.entities.comprobantes.Factura;
 import com.delivery.demo.entities.comprobantes.Orden;
 import com.delivery.demo.repositories.articulos.ArticuloInsumoRepository;
+import com.delivery.demo.repositories.articulos.ArticuloManufacturadoRepository;
 import com.delivery.demo.repositories.comprobantes.FacturaRepository;
 import com.delivery.demo.repositories.comprobantes.OrdenRepository;
 import com.delivery.demo.specifications.SearchSpecification;
@@ -27,6 +28,9 @@ public class ReportesServiceImpl implements ReportesService {
 
     @Autowired
     FacturaRepository facturaRepository;
+
+    @Autowired
+    ArticuloManufacturadoRepository manufacturadoRepository;
 
     @Override
     public List<GraficosDTO> getOutOfStock() throws Exception {
@@ -99,6 +103,34 @@ public class ReportesServiceImpl implements ReportesService {
 
             return graficosDTOS;
 
+        } catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<GraficosDTO> getInsumoMasVendido(Date fechaInicio, Date fechaFin) throws Exception {
+        try {
+            List<Object[]> objects = insumoRepository.getMasVendidos(fechaInicio, fechaFin);
+            List<GraficosDTO> insumosMasVendidos = new ArrayList<>();
+            for (Object[] object: objects) {
+                insumosMasVendidos.add(new GraficosDTO(object[0].toString(), (double) object[1]));
+            }
+            return insumosMasVendidos;
+        } catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<GraficosDTO> getManufacturadoMasVendido(Date fechaInicio, Date fechaFin) throws Exception {
+        try {
+            List<Object[]> objects = manufacturadoRepository.getMasVendidos(fechaInicio, fechaFin);
+            List<GraficosDTO> manufacturadosMasVendidos = new ArrayList<>();
+            for (Object[] object: objects) {
+                manufacturadosMasVendidos.add(new GraficosDTO(object[0].toString(), (double) object[1]));
+            }
+            return manufacturadosMasVendidos;
         } catch (Exception e){
             throw new Exception(e.getMessage());
         }
