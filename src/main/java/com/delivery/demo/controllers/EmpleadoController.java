@@ -29,4 +29,21 @@ public class EmpleadoController extends BaseController<Empleado, EmpleadoService
         }
 
     }
+
+    @GetMapping("/cuil/{cuil}")
+    @Transactional
+    public ResponseEntity<?> existByCuil(@PathVariable String cuil) {
+
+        try {
+
+            return ResponseEntity.status(HttpStatus.OK).body(service.existByCuil(cuil));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body
+                    ("{\"error\": \""+e.getMessage()+"\"}");
+
+        }
+
+    }
 }

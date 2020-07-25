@@ -2,13 +2,16 @@ package com.delivery.demo.services.empleado;
 
 import com.delivery.demo.entities.usuarios.Empleado;
 import com.delivery.demo.repositories.BaseRepository;
+import com.delivery.demo.repositories.usuarios.EmpleadoRepository;
 import com.delivery.demo.services.base.BaseServiceImpl;
 import com.delivery.demo.specifications.SearchSpecification;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -25,6 +28,9 @@ public class EmpleadoServiceImpl extends BaseServiceImpl<Empleado, Long> impleme
     }
 
     SearchSpecification<Empleado> spec = new SearchSpecification<Empleado>();
+
+    @Autowired
+    EmpleadoRepository empleadoRepository;
 
     @Override
     public Map<String, Object> findAll(String filter, int page, int size, String sortBy, String direction) throws Exception {
@@ -110,6 +116,19 @@ public class EmpleadoServiceImpl extends BaseServiceImpl<Empleado, Long> impleme
             Optional<Empleado> entityOptional = baseRepository.findOne(Specification.where(filterByUID));
 
             return entityOptional.get();
+
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
+        }
+    }
+
+    @Override
+    public boolean existByCuil(String cuil) throws Exception {
+        try {
+
+            return empleadoRepository.existsByCuil(cuil);
 
         } catch (Exception e) {
 

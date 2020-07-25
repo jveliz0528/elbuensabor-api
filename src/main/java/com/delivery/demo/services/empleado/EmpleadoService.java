@@ -5,4 +5,5 @@ import com.delivery.demo.services.base.BaseService;
 
 public interface EmpleadoService extends BaseService<Empleado, Long> {
     public Empleado findByUID(String uid) throws Exception;
+    public boolean existByCuil(String cuil) throws Exception;
 }
