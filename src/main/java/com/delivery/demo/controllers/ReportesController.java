@@ -87,14 +87,16 @@ public class ReportesController {
         }
     }
 
-    @GetMapping("/time")
-    public ResponseEntity<?> getLocalTime(){
+    @GetMapping("/cantidadOrdenes")
+    public ResponseEntity<?> getOrdenes(
+            @RequestParam Date fechaInicio,
+            @RequestParam Date fechaFin) {
         try {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
-            return ResponseEntity.status(HttpStatus.OK).body(dtf.format(now));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(reportesService.getOrdenesPorCliente(fechaInicio, fechaFin));
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }

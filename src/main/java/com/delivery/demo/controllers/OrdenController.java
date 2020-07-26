@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @RestController
@@ -100,6 +102,18 @@ public class OrdenController extends BaseController<Orden, OrdenServiceImpl> {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body
                     ("{\"error\": \""+e.getMessage()+"\"}");
 
+        }
+    }
+
+    @GetMapping("/time")
+    public ResponseEntity<?> getLocalTime(){
+        try {
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            DateTimeFormatter tf = DateTimeFormatter.ofPattern("HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            return ResponseEntity.status(HttpStatus.OK).body("{\"date\": \""+df.format(now)+"\", \"time\": \""+tf.format(now)+"\"}");
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

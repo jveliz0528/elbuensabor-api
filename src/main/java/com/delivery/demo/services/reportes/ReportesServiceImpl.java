@@ -8,6 +8,7 @@ import com.delivery.demo.repositories.articulos.ArticuloInsumoRepository;
 import com.delivery.demo.repositories.articulos.ArticuloManufacturadoRepository;
 import com.delivery.demo.repositories.comprobantes.FacturaRepository;
 import com.delivery.demo.repositories.comprobantes.OrdenRepository;
+import com.delivery.demo.repositories.usuarios.UsuarioRepository;
 import com.delivery.demo.specifications.SearchSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,6 +32,9 @@ public class ReportesServiceImpl implements ReportesService {
 
     @Autowired
     ArticuloManufacturadoRepository manufacturadoRepository;
+
+    @Autowired
+    UsuarioRepository usuarioRepository;
 
     @Override
     public List<GraficosDTO> getOutOfStock() throws Exception {
@@ -98,7 +102,7 @@ public class ReportesServiceImpl implements ReportesService {
 
             List<GraficosDTO> graficosDTOS = new ArrayList<>();
 
-            graficosDTOS.add(new GraficosDTO("CANTIDAD", cantidad));
+            graficosDTOS.add(new GraficosDTO("ORDENES", cantidad));
             graficosDTOS.add(new GraficosDTO("INGRESOS", ingresos));
 
             return graficosDTOS;
@@ -131,6 +135,20 @@ public class ReportesServiceImpl implements ReportesService {
                 manufacturadosMasVendidos.add(new GraficosDTO(object[0].toString(), (double) object[1]));
             }
             return manufacturadosMasVendidos;
+        } catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<GraficosDTO> getOrdenesPorCliente(Date fechaInicio, Date fechaFin) throws Exception {
+        try {
+            List<Object[]> objects = usuarioRepository.getOrdenes(fechaInicio, fechaFin);
+            List<GraficosDTO> cantidadOrdenes = new ArrayList<>();
+            for (Object[] object: objects) {
+                cantidadOrdenes.add(new GraficosDTO(object[0].toString(), Double.parseDouble(object[1].toString())));
+            }
+            return cantidadOrdenes;
         } catch (Exception e){
             throw new Exception(e.getMessage());
         }
